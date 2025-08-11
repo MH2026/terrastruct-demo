@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Terrastruct Control Panel — Demo</title>
+<style>
+:root{
+  --bg:#080b11;--panel:#10151f;--muted:#9aa4b2;--text:#eef3fb;--accent:#d7dde6;
+  --brand:#c5cbd6;--good:#2fbf71;--warn:#e3b341;--bad:#e35d5b;--stroke:#1f2634;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:radial-gradient(1000px 700px at 70% -10%, #182233 0%, #080b11 60%);color:var(--text)}
+.header{display:flex;align-items:center;gap:16px;padding:14px 18px;border-bottom:1px solid var(--stroke);
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,0));position:sticky;top:0;z-index:10;backdrop-filter:blur(6px)}
+.brand{font-weight:800;letter-spacing:.14em}
+.subtle{color:var(--muted);font-size:12px}
+.legend{font-size:12px;color:var(--muted);padding-left:8px}
+.container{display:grid;grid-template-columns:260px 1fr;height:calc(100% - 64px)}
+.sidebar{border-right:1px solid var(--stroke);background:#0b1018;padding:12px;overflow:auto}
+.nav-section{margin-bottom:12px}
+.nav-title{font-size:11px;color:var(--muted);margin:12px 8px}
+.nav button{width:100%;text-align:left;background:transparent;border:1px solid var(--stroke);color:var(--text);
+  padding:10px;border-radius:10px;margin:6px 0;cursor:pointer;transition:background .15s,border-color .15s}
+.nav button.active{border-color:#334262;background:#111826}
+.main{padding:18px;overflow:auto}
+.kpis{display:grid;grid-template-columns:repeat(8,minmax(140px,1fr));gap:10px;padding:12px 18px}
+.kpi{background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:12px;transition:transform .2s,border-color .2s}
+.kpi:hover{transform:translateY(-2px);border-color:#2b3550}
+.kpi .label{font-size:12px;color:var(--muted)} .kpi .value{font-size:18px;margin-top:6px}
+.tiles{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.tile{grid-column:span 4;background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:14px;min-height:120px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.tile h3{margin:0 0 8px 0;font-size:14px;color:var(--accent)}
+.badge{padding:2px 6px;border:1px solid #2a3244;border-radius:6px;font-size:11px;color:#c9d1e1;margin-left:8px}
+.tag{border:1px solid #33405a;color:#c9d1e1;padding:2px 6px;border-radius:6px;font-size:11px}
+.status-good{color:var(--good)} .status-warn{color:var(--warn)} .status-bad{color:var(--bad)}
+hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
+.section-title{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.section-title h2{margin:0;font-size:16px}
+.info{font-size:12px;color:var(--muted)}
+.list{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr .8fr;gap:10px}
+.list .row{display:contents} .list .head{color:var(--muted);font-size:12px}
+.list .cell{background:#0e1420;border:1px solid #1d2332;padding:10px;border-radius:10px}
+.footer{padding:10px 18px;border-top:1px solid var(--stroke);color:var(--muted);font-size:12px}
+.logo{width:40px;height:40px}
+</style>
+</head>
+<body>
+  <div class="header">
+    <!-- Inline SVG logo -->
+    <svg class="logo" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-label="Terrastruct logo">
+      <defs>
+        <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d9dde2"/><stop offset="35%" stop-color="#ffffff"/>
+          <stop offset="65%" stop-color="#c3c9d2"/><stop offset="100%" stop-color="#8e96a3"/>
+        </linearGradient>
+      </defs>
+      <circle cx="110" cy="110" r="100" fill="none" stroke="url(#chrome)" stroke-width="5"/>
+      <g opacity="0.5" stroke="url(#chrome)" stroke-width="2" fill="none">
+        <ellipse cx="110" cy="110" rx="78" ry="38"/>
+        <ellipse cx="110" cy="110" rx="78" ry="38" transform="rotate(45 110 110)"/>
+        <ellipse cx="110" cy="110" rx="78" ry="38" transform="rotate(-45 110 110)"/>
+        <line x1="10" y1="110" x2="210" y2="110"/><line x1="110" y1="10" x2="110" y2="210"/>
+      </g>
+      <g><rect x="60" y="95" width="100" height="20" rx="3" fill="url(#chrome)"/>
+         <rect x="101" y="50" width="18" height="120" rx="3" fill="url(#chrome)"/></g>
+    </svg>
+    <div>
+      <div class="brand">TERRASTRUCT</div>
+      <div class="subtle">Control Panel • RAK Pilot • <span id="clock"></span> (UAE)</div>
+    </div>
+    <div style="margin-left:auto" class="legend">Legend: <span class="tag">Simulated</span> items use ◦</div>
+  </div>
+
+  <div class="container">
+    <aside class="sidebar">
+      <div class="nav">
+        <div class="nav-section">
+          <div class="nav-title">NAVIGATION</div>
+          <button data-view="dashboard" class="active">Dashboard</button>
+          <button data-view="siteops">Site Ops</button>
+          <button data-view="machinery">Machinery</button>
+          <button data-view="microclimate">Microclimate & Water</button>
+          <button data-view="materials">Materials</button>
+          <button data-view="financials">Financials</button>
+          <button data-view="partners">Partners</button>
+          <button data-view="datasets">Datasets (Defensible IP)</button>
+          <button data-view="settings">Settings</button>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">AI AGENTS (Professions)</div>
+          <div class="info">
+            <div><b>Surveyor LLM</b> — Geomatics, Remote Sensing</div>
+            <div><b>Design LLM</b> — Civil, Geotech, Hydro, Env</div>
+            <div><b>Planner LLM</b> — Scheduler, Ops Research</div>
+            <div><b>Execution LLM</b> — Ops Manager, Superintendent</div>
+            <div><b>Safety Wrapper</b> — HSE, Geotechnical Risk</div>
+            <div><b>Adapter Gateway</b> — Robotics, CAN/ROS</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="view">
+        <div class="kpis">
+          <div class="kpi"><div class="label">Site Readiness</div><div class="value">82%</div></div>
+          <div class="kpi"><div class="label">Active Workfaces</div><div class="value">3</div></div>
+          <div class="kpi"><div class="label">Excavation Today</div><div class="value">2,450 m³ ◦</div></div>
+          <div class="kpi"><div class="label">Crusher Throughput</div><div class="value">185 t/h ◦</div></div>
+          <div class="kpi"><div class="label">Lake Level (Δ24h)</div><div class="value">284.3 m (+0.03) ◦</div></div>
+          <div class="kpi"><div class="label">Est
