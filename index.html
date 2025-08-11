@@ -1,545 +1,446 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Terrastruct Control Panel — Investor Demo</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Terrastruct • Operations Control</title>
 <style>
-:root{
-  --bg:#080b11;--panel:#10151f;--muted:#9aa4b2;--text:#eef3fb;--accent:#d7dde6;
-  --good:#2fbf71;--warn:#e3b341;--bad:#e35d5b;--stroke:#1f2634;
-}
-*{box-sizing:border-box} html,body{height:100%}
-body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:radial-gradient(1000px 700px at 70% -10%, #182233 0%, #080b11 60%);color:var(--text)}
-.header{display:flex;align-items:center;gap:16px;padding:14px 18px;border-bottom:1px solid var(--stroke);
-  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,0));position:sticky;top:0;z-index:10;backdrop-filter:blur(6px)}
-.logo{width:40px;height:40px}
-.brand{font-weight:800;letter-spacing:.14em}
-.subtle{color:var(--muted);font-size:12px}
-.legend{font-size:12px;color:var(--muted);padding-left:8px}
-.container{display:grid;grid-template-columns:260px 1fr;height:calc(100% - 64px)}
-.sidebar{border-right:1px solid var(--stroke);background:#0b1018;padding:12px;overflow:auto}
-.nav-section{margin-bottom:12px}
-.nav-title{font-size:11px;color:var(--muted);margin:12px 8px}
-.nav button{width:100%;text-align:left;background:transparent;border:1px solid var(--stroke);color:var(--text);
-  padding:10px;border-radius:10px;margin:6px 0;cursor:pointer;transition:background .15s,border-color .15s}
-.nav button.active{border-color:#334262;background:#111826}
-.main{padding:18px;overflow:auto}
-.kpis{display:grid;grid-template-columns:repeat(8,minmax(140px,1fr));gap:10px;padding:12px 18px}
-.kpi{background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:12px}
-.kpi .label{font-size:12px;color:var(--muted)} .kpi .value{font-size:18px;margin-top:6px}
-.tiles{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
-.tile{grid-column:span 4;background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:14px;min-height:120px}
-.tile h3{margin:0 0 8px 0;font-size:14px;color:var(--accent)}
-.badge{padding:2px 6px;border:1px solid #2a3244;border-radius:6px;font-size:11px;color:#c9d1e1;margin-left:8px}
-.tag{border:1px solid #33405a;color:#c9d1e1;padding:2px 6px;border-radius:6px;font-size:11px}
-.status-good{color:var(--good)} .status-warn{color:var(--warn)} .status-bad{color:var(--bad)}
-hr.sep{border:0;border-top:1px solid #1d2630;margin:14px 0}
-.section-title{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.section-title h2{margin:0;font-size:16px}
-.info{font-size:12px;color:var(--muted)}
-.list{display:grid;grid-template-columns:1.1fr .7fr .6fr .7fr .8fr .9fr;gap:10px}
-.list .row{display:contents} .list .head{color:var(--muted);font-size:12px}
-.list .cell{background:#0e1420;border:1px solid #1d2332;padding:10px;border-radius:10px;display:flex;align-items:center;gap:8px}
-.footer{padding:10px 18px;border-top:1px solid var(--stroke);color:var(--muted);font-size:12px}
-button{cursor:pointer;border:1px solid #2a3244;background:#111826;color:#e8edf5;border-radius:8px;padding:6px 10px}
-button:disabled{opacity:.6;cursor:not-allowed}
-button.danger{border-color:#5a2730;background:#2a0f15;color:#ffb3b3}
-.toast{position:fixed;right:16px;bottom:16px;background:#111826;border:1px solid #2a3244;color:#e8edf5;
-  padding:10px 12px;border-radius:10px;opacity:0;transform:translateY(8px);transition:.2s}
-.toast.show{opacity:1;transform:translateY(0)}
-.toast.err{border-color:#6b2a2a;color:#ffc7c7}
-.log-box{max-height:180px;overflow:auto;background:#0e1420;border:1px solid #1d2332;border-radius:8px;padding:8px}
-.log-row{padding:6px 8px;border-bottom:1px dashed #1d2332}
-dialog{background:#0f1420;color:#e8edf5;border:1px solid #2a3244;border-radius:12px;padding:16px}
-canvas{width:100%;height:220px;display:block;background:#0e1420;border:1px solid #1d2332;border-radius:8px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.agent{background:#0e1420;border:1px solid #1d2332;border-radius:12px;padding:12px}
-.agent .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center}
-.agent .bar{height:6px;background:#141b28;border:1px solid #1d2332;border-radius:8px;margin-top:8px;overflow:hidden}
-.agent .bar>span{display:block;height:100%;background:#2b6df6;width:0%}
-.badge-live{border:1px solid #2b6df6;color:#bcd3ff;padding:2px 6px;border-radius:6px;font-size:11px}
-.hist-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-/* Leaflet map container + Terrastruct Skys brand */
-#map{width:100%;height:360px;background:#0e1420;border:1px solid #1d2332;border-radius:10px}
-.leaflet-control-tskys{
-  background:rgba(16,21,31,.8); color:#e8edf5; border:1px solid #2a3244; border-radius:8px;
-  padding:6px 10px; font-size:12px; box-shadow:0 4px 12px rgba(0,0,0,.35);
-}
-.leaflet-control-tskys b{letter-spacing:.06em}
+  :root{
+    --bg:#0b0d12;--panel:#111620;--panel2:#141a25;--ink:#eaf1ff;--ink-dim:#9db0c8;
+    --line:#243249;--accent:#6ee3ff;--ok:#1dd1a1;--warn:#feca57;--bad:#ff6b6b;--radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(120% 120% at 70% 0%,#0e1420 0%,#090c12 45%,#070a0f 100%);color:var(--ink);
+       font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1280px;margin:28px auto;padding:0 18px 60px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .logo{width:36px;height:36px;border-radius:50%;background:
+      radial-gradient(120% 120% at 30% 20%, #cfd8e6 0%, #9aa6b8 25%, #5c6776 50%, #2f363f 65%, #0d1117 100%);
+      position:relative;box-shadow:0 2px 24px rgba(110,227,255,.15)}
+  .brand .logo:before{content:"T";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-weight:800;color:#e6eefb;letter-spacing:.5px;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+  .brand .title{font-weight:700;letter-spacing:.4px}
+  .chip{font-size:12px;color:#c1d2ea;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#0f1520}
+  .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+  @media (max-width:980px){.grid{grid-template-columns:1fr}}
+  .card{background:linear-gradient(180deg,#151b26,#0f1420);border:1px solid var(--line);
+        border-radius:var(--radius);box-shadow:0 12px 30px rgba(0,0,0,.35);overflow:hidden}
+  .card-hd{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:12px 14px}
+  .card-hd h3{margin:0;font-size:15px;letter-spacing:.3px}
+  .sub{font-size:12px;color:var(--ink-dim)}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{appearance:none;border:1px solid #2b3a52;background:#0f1623;color:var(--ink);padding:9px 12px;border-radius:10px;
+       font-weight:600;cursor:pointer}
+  .btn:hover{border-color:#3a4c6a;transform:translateY(-1px)}
+  .btn.primary{background:linear-gradient(180deg,#0fb6d9,#0aa1c1);border-color:#119db7}
+  .kv{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media (max-width:980px){.kv{grid-template-columns:repeat(2,1fr)}}
+  .kv .tile{background:linear-gradient(180deg,#161d2a,#111826);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .kv .k{font-size:12px;color:#9fb2cc}
+  .kv .v{font-size:20px;font-weight:700;margin-top:6px}
+  .status-dot{width:9px;height:9px;border-radius:50%}
+  .ok{background:var(--ok);box-shadow:0 0 12px var(--ok)}
+  .bad{background:var(--bad);box-shadow:0 0 12px var(--bad)}
+  .warn{background:var(--warn);box-shadow:0 0 12px var(--warn)}
+  .section{margin-top:18px}
+  .panel-pad{padding:12px 14px}
+  .flex{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .radar{position:relative;aspect-ratio:16/9;background:#0b1118}
+  .radar video,.radar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:contrast(1.05) saturate(1.08)}
+  .glass{position:absolute;inset:0;background:radial-gradient(120% 120% at 80% 0%,rgba(110,227,255,.10),transparent 50%),linear-gradient(rgba(4,7,10,.18),rgba(4,7,10,.35))}
+  .wm{position:absolute;left:10px;bottom:10px;font-size:11px;color:#93a6c5;background:rgba(8,12,18,.55);
+      padding:6px 8px;border-radius:8px;border:1px solid #1c2432}
+  .note{font-size:12px;color:#8fa3c2}
+  .toolbar{display:flex;gap:10px;align-items:center}
+  input,select{background:#0f1623;color:#dfe9fb;border:1px solid #2b3a52;border-radius:10px;padding:8px 10px}
+  .chart-wrap{padding:12px 14px}
+  canvas{width:100%;height:260px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border-top:1px solid #233149;padding:10px 8px}
+  th{color:#bcd0ef;text-align:left;font-weight:600}
+  tr:hover td{background:#0e1521}
 </style>
 </head>
 <body>
-  <div class="header">
-    <!-- Inline logo -->
-    <svg class="logo" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-label="Terrastruct logo">
-      <defs><linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#d9dde2"/><stop offset="35%" stop-color="#ffffff"/>
-        <stop offset="65%" stop-color="#c3c9d2"/><stop offset="100%" stop-color="#8e96a3"/></linearGradient></defs>
-      <circle cx="110" cy="110" r="100" fill="none" stroke="url(#chrome)" stroke-width="5"/>
-      <g opacity="0.5" stroke="url(#chrome)" stroke-width="2" fill="none">
-        <ellipse cx="110" cy="110" rx="78" ry="38"/>
-        <ellipse cx="110" cy="110" rx="78" ry="38" transform="rotate(45 110 110)"/>
-        <ellipse cx="110" cy="110" rx="78" ry="38" transform="rotate(-45 110 110)"/>
-        <line x1="10" y1="110" x2="210" y2="110"/><line x1="110" y1="10" x2="110" y2="210"/>
-      </g>
-      <g><rect x="60" y="95" width="100" height="20" rx="3" fill="url(#chrome)"/>
-         <rect x="101" y="50" width="18" height="120" rx="3" fill="url(#chrome)"/></g>
-    </svg>
-    <div>
-      <div class="brand">TERRASTRUCT</div>
-      <div class="subtle">Control Panel • RAK Pilot • <span id="clock"></span> (UAE)</div>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="title">TERRASTRUCT • Admin Control</div>
+      <span class="chip">Showka – Hajar Microclimate Ops</span>
     </div>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-      <button id="estopBtn" class="danger">Emergency Stop</button>
-      <div class="legend">Legend: <span class="tag">Simulated</span> items use ◦</div>
+    <div class="row">
+      <span class="chip" id="simClock">--:--</span>
+      <span class="chip">DEMO MODE</span>
+    </div>
+  </header>
+
+  <!-- TOP STATS -->
+  <div class="card">
+    <div class="card-hd">
+      <h3>Site Overview</h3>
+      <div class="flex">
+        <div class="flex"><div class="status-dot ok"></div><span class="sub">AI Agents: Connected</span></div>
+        <div class="flex"><div class="status-dot ok"></div><span class="sub">Fleet Telemetry</span></div>
+        <div class="flex"><div class="status-dot warn"></div><span class="sub">Weather: Watch</span></div>
+      </div>
+    </div>
+    <div class="panel-pad">
+      <div class="kv" id="kvStats">
+        <!-- Populated by JS -->
+      </div>
     </div>
   </div>
 
-  <div class="container">
-    <aside class="sidebar">
-      <div class="nav">
-        <div class="nav-section">
-          <div class="nav-title">NAVIGATION</div>
-          <button data-view="dashboard" class="active">Dashboard</button>
-          <button data-view="siteops">Site Ops</button>
-          <button data-view="agents">AI Agents</button>
-          <button data-view="machinery">Machinery</button>
-          <button data-view="weather">Microclimate & Weather</button>
-          <button data-view="materials">Materials</button>
-          <button data-view="datasets">Datasets (Defensible IP)</button>
-          <button data-view="history">History Search</button>
-          <button data-view="settings">Settings</button>
-        </div>
-        <div class="nav-section">
-          <div class="nav-title">AI AGENTS (Professions)</div>
-          <div class="info">
-            <div><b>Surveyor LLM</b> — Geomatics, Remote Sensing</div>
-            <div><b>Design LLM</b> — Civil, Geotech, Hydro, Env</div>
-            <div><b>Planner LLM</b> — Scheduler, Ops Research</div>
-            <div><b>Execution LLM</b> — Ops Manager, Superintendent</div>
-            <div><b>Safety Wrapper</b> — HSE, Geotechnical Risk</div>
-            <div><b>Adapter Gateway</b> — Robotics, CAN/ROS</div>
+  <div class="section grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="col">
+
+      <!-- OPERATIONS RANGE + SEARCH -->
+      <div class="card">
+        <div class="card-hd">
+          <h3>Operations History</h3>
+          <div class="toolbar">
+            <label class="sub">From</label><input type="date" id="fromDate">
+            <label class="sub">To</label><input type="date" id="toDate">
+            <button class="btn" id="btnApply">Apply</button>
+            <button class="btn" id="btnLastStorm">Last Storm</button>
           </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="opsChart" height="260"></canvas>
+        </div>
+        <div class="panel-pad">
+          <table id="opsTable">
+            <thead><tr>
+              <th>Date</th><th>Machine</th><th>Hours</th><th>Material moved (m³)</th><th>Fuel (L)</th><th>Notes</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
-    </aside>
 
-    <main class="main">
-      <!-- DASHBOARD -->
-      <section id="dashboard" class="view">
-        <div class="kpis">
-          <div class="kpi"><div class="label">Site Readiness</div><div class="value" data-kpi="readiness">82%</div></div>
-          <div class="kpi"><div class="label">Active Workfaces</div><div class="value" data-kpi="workfaces">3</div></div>
-          <div class="kpi"><div class="label">Excavation Today</div><div class="value" data-kpi="excavation">2,450 m³ ◦</div></div>
-          <div class="kpi"><div class="label">Crusher Throughput</div><div class="value" data-kpi="crusher">185 t/h ◦</div></div>
-          <div class="kpi"><div class="label">Lake Level (Δ24h)</div><div class="value" data-kpi="lake">284.3 m ◦</div></div>
-          <div class="kpi"><div class="label">Est. Evaporation</div><div class="value" data-kpi="evap">820 m³/d ◦</div></div>
-          <div class="kpi"><div class="label">Vegetation Index</div><div class="value" data-kpi="ndvi">0.38 ◦</div></div>
-          <div class="kpi"><div class="label">Safety Incidents</div><div class="value" data-kpi="incidents">0</div></div>
-        </div>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 8">
-            <h3>Lake Creation — Machine Hours (6 months) ◦</h3>
-            <canvas id="machHoursChart"></canvas>
-          </div>
-          <div class="tile" style="grid-column:span 4">
-            <h3>System Log</h3>
-            <div id="systemLog" class="log-box"></div>
+      <!-- WEATHER RADAR (DEMO) -->
+      <div class="card">
+        <div class="card-hd">
+          <h3>Weather Radar • UAE NCM (RAIN.ae)</h3>
+          <div class="row">
+            <button class="btn" onclick="window.open('https://rain.ae','_blank','noopener')">Open RAIN.ae</button>
+            <button class="btn primary" onclick="window.open('https://rain.ae/?view=radar','_blank','noopener')">Open Live Radar</button>
           </div>
         </div>
-      </section>
-
-      <!-- SITE OPS -->
-      <section id="siteops" class="view" hidden>
-        <div class="section-title"><h2>Site Operations</h2><span class="badge">Terrastruct Skys — Live Radar</span></div>
-        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
-          <button id="radarToggle">Toggle Radar</button>
-          <small class="info">Powered by Terrastruct Skys ◦</small>
+        <div class="radar" role="img" aria-label="Radar preview">
+          <!-- DEMO LOOP: replace with your file names; image is fallback -->
+          <video id="radarVid" playsinline autoplay muted loop poster="radar-preview.gif">
+            <source src="radar-demo.mp4" type="video/mp4">
+          </video>
+          <img id="radarImg" src="radar-preview.gif" alt="Radar preview (UAE)" style="display:none" />
+          <div class="glass"></div>
+          <div class="wm">Source: UAE NCM (RAIN.ae) • Demo mode</div>
         </div>
-        <div id="map"></div>
-      </section>
+        <div class="panel-pad">
+          <div class="note">When NCM grants tiles/API, replace the video/img with your WebGL radar layer.
+            UI remains identical, so the transition is seamless.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col">
 
       <!-- AI AGENTS -->
-      <section id="agents" class="view" hidden>
-        <div class="section-title"><h2>AI Agents</h2><span class="badge-live">Live-simulated</span></div>
-        <div class="agent-grid">
-          <div class="agent" data-agent="Surveyor">
-            <h3>Surveyor LLM</h3>
-            <div class="meta"><span class="tag">Geomatics</span><span id="a-Surveyor-status">Idle</span> • Last run: <span id="a-Surveyor-last">–</span></div>
-            <div class="bar"><span id="a-Surveyor-bar"></span></div>
-            <button data-run="Surveyor">Process Drone Survey</button>
-            <div class="info" id="a-Surveyor-out">Awaiting task…</div>
-          </div>
-          <div class="agent" data-agent="Design">
-            <h3>Design LLM</h3>
-            <div class="meta"><span class="tag">Civil • Hydro</span><span id="a-Design-status">Idle</span> • Last run: <span id="a-Design-last">–</span></div>
-            <div class="bar"><span id="a-Design-bar"></span></div>
-            <button data-run="Design">Generate Grading Plan</button>
-            <div class="info" id="a-Design-out">Awaiting task…</div>
-          </div>
-          <div class="agent" data-agent="Planner">
-            <h3>Planner LLM</h3>
-            <div class="meta"><span class="tag">Scheduling</span><span id="a-Planner-status">Idle</span> • Last run: <span id="a-Planner-last">–</span></div>
-            <div class="bar"><span id="a-Planner-bar"></span></div>
-            <button data-run="Planner">Sequence Work Orders</button>
-            <div class="info" id="a-Planner-out">Awaiting task…</div>
-          </div>
-          <div class="agent" data-agent="Execution">
-            <h3>Execution LLM</h3>
-            <div class="meta"><span class="tag">Ops</span><span id="a-Execution-status">Idle</span> • Last run: <span id="a-Execution-last">–</span></div>
-            <div class="bar"><span id="a-Execution-bar"></span></div>
-            <button data-run="Execution">Dispatch Machines</button>
-            <div class="info" id="a-Execution-out">Awaiting task…</div>
-          </div>
-          <div class="agent" data-agent="Safety">
-            <h3>Safety Wrapper</h3>
-            <div class="meta"><span class="tag">HSE</span><span id="a-Safety-status">Idle</span> • Last run: <span id="a-Safety-last">–</span></div>
-            <div class="bar"><span id="a-Safety-bar"></span></div>
-            <button data-run="Safety">Run Safety Sweep</button>
-            <div class="info" id="a-Safety-out">Awaiting task…</div>
-          </div>
-          <div class="agent" data-agent="Adapter">
-            <h3>Adapter Gateway</h3>
-            <div class="meta"><span class="tag">CAN/ROS</span><span id="a-Adapter-status">Idle</span> • Last run: <span id="a-Adapter-last">–</span></div>
-            <div class="bar"><span id="a-Adapter-bar"></span></div>
-            <button data-run="Adapter">Sync OEM Interfaces</button>
-            <div class="info" id="a-Adapter-out">Awaiting task…</div>
-          </div>
+      <div class="card">
+        <div class="card-hd"><h3>AI Agents</h3><span class="sub">Autonomy & Orchestration</span></div>
+        <div class="panel-pad">
+          <table>
+            <thead><tr><th>Agent</th><th>Status</th><th>Last Action</th><th>Confidence</th></tr></thead>
+            <tbody id="agentsTable"></tbody>
+          </table>
         </div>
-      </section>
+      </div>
 
-      <!-- MACHINERY -->
-      <section id="machinery" class="view" hidden>
-        <div class="section-title">
-          <h2>Machinery</h2><span class="badge">Execution LLM — Ops</span>
+      <!-- WEATHER SNAPSHOT -->
+      <div class="card">
+        <div class="card-hd"><h3>Weather Snapshot</h3><span class="sub">Site microclimate (Demo)</span></div>
+        <div class="panel-pad" id="wxPanel">
+          <!-- Populated by JS (POWER-like fields for demo) -->
         </div>
-        <div class="grid-2">
-          <div class="tile">
-            <h3>Daily Operating Hours (Last 30 days) ◦</h3>
-            <canvas id="machDailyChart"></canvas>
-          </div>
-          <div class="tile">
-            <h3>Cumulative Hours by Machine Type (6 months) ◦</h3>
-            <canvas id="machTypeChart"></canvas>
-          </div>
-        </div>
-        <hr class="sep"/>
-        <div class="list">
-          <div class="row head">
-            <div class="cell">Machine</div><div class="cell">Status</div>
-            <div class="cell">Utilization</div><div class="cell">Hrs to Service</div><div class="cell">Location</div><div class="cell">Actions</div>
-          </div>
-          <div class="row">
-            <div class="cell">Excavator 01 – Primary</div><div class="cell">Active ●</div><div class="cell">76%</div><div class="cell">18h</div><div class="cell">Workface A</div>
-            <div class="cell"><button data-cmd="pause" data-target="Excavator 01">Pause</button><button data-cmd="resume" data-target="Excavator 01">Resume</button></div>
-          </div>
-          <div class="row">
-            <div class="cell">Excavator 02 – Secondary</div><div class="cell">Standby ◦</div><div class="cell">22%</div><div class="cell">46h</div><div class="cell">Yard</div>
-            <div class="cell"><button data-cmd="resume" data-target="Excavator 02">Resume</button></div>
-          </div>
-          <div class="row">
-            <div class="cell">Mobile Jaw Crusher – Primary</div><div class="cell">Running ●</div><div class="cell">68%</div><div class="cell">18h</div><div class="cell">Crusher Pad</div>
-            <div class="cell"><button data-cmd="pause" data-target="Jaw Crusher">Pause</button><button data-cmd="reassign" data-target="Jaw Crusher">Reassign</button></div>
-          </div>
-          <div class="row">
-            <div class="cell">Wheel Loader 01</div><div class="cell">Active ●</div><div class="cell">61%</div><div class="cell">34h</div><div class="cell">Stockpile 1</div>
-            <div class="cell"><button data-cmd="pause" data-target="Wheel Loader 01">Pause</button><button data-cmd="resume" data-target="Wheel Loader 01">Resume</button></div>
-          </div>
-          <div class="row">
-            <div class="cell">ADT 01</div><div class="cell">Active ●</div><div class="cell">58%</div><div class="cell">52h</div><div class="cell">Haul N</div>
-            <div class="cell"><button data-cmd="pause" data-target="ADT 01">Pause</button><button data-cmd="reassign" data-target="ADT 01">Reassign</button></div>
-          </div>
-          <div class="row">
-            <div class="cell">ADT 02</div><div class="cell">Active ●</div><div class="cell">54%</div><div class="cell">50h</div><div class="cell">Haul N</div>
-            <div class="cell"><button data-cmd="pause" data-target="ADT 02">Pause</button><button data-cmd="reassign" data-target="ADT 02">Reassign</button></div>
-          </div>
-        </div>
-      </section>
+      </div>
 
-      <!-- WEATHER -->
-      <section id="weather" class="view" hidden>
-        <div class="section-title"><h2>Microclimate & Weather</h2><span class="badge">Design LLM — Civil/Hydro/Env</span></div>
-        <div class="grid-2">
-          <div class="tile">
-            <h3>Rainfall (6 months) ◦</h3>
-            <canvas id="rainChart"></canvas>
-          </div>
-          <div class="tile">
-            <h3>Temperature (6 months) ◦</h3>
-            <canvas id="tempChart"></canvas>
-          </div>
+      <!-- SYSTEM LOGS -->
+      <div class="card">
+        <div class="card-hd"><h3>System Log</h3><span class="sub">Last 24h</span></div>
+        <div class="panel-pad">
+          <table>
+            <thead><tr><th>Time</th><th>Event</th></tr></thead>
+            <tbody id="logTable"></tbody>
+          </table>
         </div>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 6">
-            <h3>Current Conditions</h3>
-            <div class="info" id="wxNow">Wind — • Temp — • Humidity — • Rain —</div>
-          </div>
-          <div class="tile" style="grid-column:span 6">
-            <h3>Site Effects ◦</h3>
-            <div class="info">Evaporation est.: <span id="wxEvap">—</span> m³/d • Ops window: <span id="wxWindow">—</span></div>
-          </div>
-        </div>
-      </section>
+      </div>
 
-      <!-- MATERIALS -->
-      <section id="materials" class="view" hidden>
-        <div class="section-title"><h2>Materials (Aggregate)</h2><span class="badge">Production</span></div>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 6"><h3>Production Tracker ◦</h3><div class="info" id="prodNow">Today — t • 7d — t • MTD — t</div></div>
-          <div class="tile" style="grid-column:span 6"><h3>Stockpiles ◦</h3><div class="info" id="stockNow">0–5mm — t • 5–10mm — t • 10–20mm — t</div></div>
-        </div>
-      </section>
-
-      <!-- DATASETS -->
-      <section id="datasets" class="view" hidden>
-        <div class="section-title"><h2>Datasets (Defensible IP)</h2><span class="badge">Data Governance</span></div>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 6"><h3>Terrain & Geology</h3><div class="info">DEM tiles • Bore logs</div></div>
-          <div class="tile" style="grid-column:span 6"><h3>Operations Telemetry</h3><div class="info">Equipment hours • Utilization • Breadcrumbs</div></div>
-          <div class="tile" style="grid-column:span 6"><h3>Materials QC</h3><div class="info">Sieve • Moisture • Density</div></div>
-          <div class="tile" style="grid-column:span 6"><h3>Water & Microclimate</h3><div class="info">Level readings • Weather • Sensor health</div></div>
-          <div class="tile" style="grid-column:span 6"><h3>Safety & Compliance</h3><div class="info">Incidents • Inspections • Geofences</div></div>
-        </div>
-      </section>
-
-      <!-- HISTORY -->
-      <section id="history" class="view" hidden>
-        <div class="section-title"><h2>History Search (Last 6 Months)</h2><span class="badge">Replay</span></div>
-        <div class="hist-ctrl">
-          <label for="histDate">Choose date:</label>
-          <input id="histDate" type="date"/>
-          <button id="histBtn">Load Day</button>
-        </div>
-        <hr class="sep"/>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 4"><h3>Operations</h3><div class="info" id="histOps">—</div></div>
-          <div class="tile" style="grid-column:span 4"><h3>Machines Active</h3><div class="info" id="histMachines">—</div></div>
-          <div class="tile" style="grid-column:span 4"><h3>Weather</h3><div class="info" id="histWx">—</div></div>
-          <div class="tile" style="grid-column:span 12"><h3>Daily Overview ◦</h3><canvas id="histDayChart"></canvas></div>
-        </div>
-      </section>
-
-      <!-- SETTINGS -->
-      <section id="settings" class="view" hidden>
-        <div class="section-title"><h2>Settings & Roles</h2><span class="badge">Admin</span></div>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 6"><h3>User Roles</h3><div class="info">Admin • Ops • Partner (view)</div></div>
-          <div class="tile" style="grid-column:span 6"><h3>Audit Log</h3><div class="info">Recent activity (demo list)</div></div>
-        </div>
-      </section>
-    </main>
+    </div>
   </div>
-
-  <div class="footer">Demo only. Items marked ◦ are simulated.</div>
-
-<!-- Core app script -->
-<script>
-// ===== BASICS =====
-const views=[...document.querySelectorAll('.view')];
-const buttons=[...document.querySelectorAll('.nav button')];
-buttons.forEach(btn=>btn.addEventListener('click',()=>{buttons.forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); const id=btn.getAttribute('data-view'); views.forEach(v=>v.hidden=(v.id!==id));
-  window.scrollTo({top:0,behavior:'smooth'});}));
-function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
-setInterval(tick,1000); tick();
-function toast(t,cls="ok"){const d=document.createElement('div');d.className="toast "+cls;d.textContent=t;document.body.appendChild(d);
-  requestAnimationFrame(()=>d.classList.add('show'));setTimeout(()=>{d.classList.remove('show');setTimeout(()=>d.remove(),250)},1800);}
-const logBox=document.getElementById('systemLog'); const log=(m)=>{const r=document.createElement('div');r.className='log-row';
-  r.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" — "+m;logBox.prepend(r);};
-
-// ===== EMERGENCY STOP =====
-const estop=document.getElementById('estopBtn'); estop.addEventListener('click',()=>{
-  const ok=confirm("Confirm Emergency Stop? This will halt all active machinery."); if(!ok) return;
-  document.body.classList.add('alerting'); toast("Emergency stop issued","err"); log("Safety: EMERGENCY STOP issued"); setTimeout(()=>document.body.classList.remove('alerting'),2000);
-});
-
-// ===== SIM DATA (6 months) =====
-const DAYS=180, now=new Date();
-function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);d.setHours(12,0,0,0);return d;}
-const series = {
-  excavators: Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:4+Math.random()*4, tons:200+Math.random()*180})),
-  dozers:     Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:2+Math.random()*3, tons:90+Math.random()*120})),
-  loaders:    Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:3+Math.random()*4, tons:140+Math.random()*160})),
-  adt:        Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:3+Math.random()*4, tons:180+Math.random()*200})),
-  crusher:    Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:6+Math.random()*2, tph:150+Math.random()*50}))
-};
-const weather = Array.from({length:DAYS},(_,i)=>{
-  const d=daysAgo(DAYS-1-i), t=36+Math.sin(i/18)*3+Math.random()*1.5, r=Math.max(0, (Math.sin(i/9)+1)*3 + (Math.random()<0.2?Math.random()*10:0));
-  return {d, temp: t, wind: 6+Math.random()*6, humidity: 28+Math.random()*25, rain: r};
-});
-function betweenDate(arr, date){return arr.find(x=>x.d.toDateString()===date.toDateString());}
-
-// ===== SIMPLE CANVAS CHARTS =====
-function lineChart(canvas, data, colorFn){
-  const ctx=canvas.getContext('2d'); const w=canvas.width=canvas.clientWidth*2; const h=canvas.height=canvas.clientHeight*2;
-  const pad=40, n=data.length; const xs=(i)=>pad+(w-2*pad)*(i/(n-1));
-  const vals=data.map(d=>d.v); const min=Math.min(...vals), max=Math.max(...vals); const ys=(v)=>h-pad-(h-2*pad)*( (v-min)/(max-min||1) );
-  ctx.clearRect(0,0,w,h); ctx.strokeStyle="#1d2332"; ctx.lineWidth=1; for(let i=0;i<5;i++){const y=pad+i*(h-2*pad)/4; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke();}
-  data.forEach((d,i)=>{ctx.fillStyle=colorFn(i); ctx.beginPath(); ctx.arc(xs(i), ys(d.v), 3, 0, Math.PI*2); ctx.fill(); if(i){ctx.strokeStyle=colorFn(i); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(xs(i-1), ys(data[i-1].v)); ctx.lineTo(xs(i), ys(d.v)); ctx.stroke();}});
-}
-function barChart(canvas, seriesMap){
-  const ctx=canvas.getContext('2d'); const w=canvas.width=canvas.clientWidth*2; const h=canvas.height=canvas.clientHeight*2;
-  const pad=40; const keys=Object.keys(seriesMap); const vals=keys.map(k=>seriesMap[k]); const max=Math.max(...vals);
-  const bw=(w-2*pad)/keys.length*0.7; const gap=(w-2*pad)/keys.length*0.3;
-  ctx.clearRect(0,0,w,h); ctx.strokeStyle="#1d2332"; for(let i=0;i<5;i++){const y=pad+i*(h-2*pad)/4; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke();}
-  keys.forEach((k,i)=>{const x=pad+i*(bw+gap); const v=seriesMap[k]; const bh=(h-2*pad)*(v/(max||1)); ctx.fillStyle="#2b6df6"; ctx.fillRect(x, h-pad-bh, bw, bh);
-    ctx.fillStyle="#c9d1e1"; ctx.font="24px sans-serif"; ctx.fillText(k, x, h-pad+28);});
-}
-
-// ===== DASHBOARD CHART =====
-const machHoursChart=document.getElementById('machHoursChart');
-const stacked = Array.from({length:DAYS},(_,i)=>{
-  const d=daysAgo(DAYS-1-i);
-  const v = series.excavators[i].h + series.dozers[i].h + series.loaders[i].h + series.adt[i].h + series.crusher[i].h;
-  return {d, v};
-});
-lineChart(machHoursChart, stacked, i=>"#6fb0ff");
-
-// ===== MACHINERY CHARTS =====
-const last30 = (arr)=>arr.slice(-30);
-const machDailyChart=document.getElementById('machDailyChart');
-lineChart(machDailyChart, last30(stacked), i=>"#6fe3c2");
-const cum = {
-  Excavators: Math.round(series.excavators.reduce((a,b)=>a+b.h,0)),
-  Dozers: Math.round(series.dozers.reduce((a,b)=>a+b.h,0)),
-  Loaders: Math.round(series.loaders.reduce((a,b)=>a+b.h,0)),
-  ADT: Math.round(series.adt.reduce((a,b)=>a+b.h,0)),
-  Crusher: Math.round(series.crusher.reduce((a,b)=>a+b.h,0)),
-};
-const machTypeChart=document.getElementById('machTypeChart'); barChart(machTypeChart, cum);
-
-// ===== WEATHER (SIM + LIVE NOW) =====
-const rainChart=document.getElementById('rainChart');
-lineChart(rainChart, weather.map(w=>({d:w.d,v:w.rain})), i=>"#8fb6ff");
-const tempChart=document.getElementById('tempChart');
-lineChart(tempChart, weather.map(w=>({d:w.d,v:w.temp})), i=>"#ffb36f");
-function setWxNow(){
-  const w=weather[weather.length-1];
-  document.getElementById('wxNow').textContent=`Wind ${w.wind.toFixed(1)} kt • Temp ${w.temp.toFixed(1)}°C • Humidity ${Math.round(w.humidity)}% • Rain ${w.rain.toFixed(1)} mm`;
-  document.getElementById('wxEvap').textContent=(700+Math.random()*200).toFixed(0);
-  document.getElementById('wxWindow').textContent="17:00–21:00";
-}
-setWxNow();
-
-// ===== KPI TICK =====
-function setKPI(sel,val){const el=document.querySelector(`[data-kpi="${sel}"]`); if(el) el.textContent=val;}
-setInterval(()=>{
-  setKPI('readiness', (78+Math.floor(Math.random()*6))+"%");
-  setKPI('excavation', (2100+Math.floor(Math.random()*800)).toLocaleString()+" m³");
-  setKPI('crusher', (160+Math.floor(Math.random()*40))+" t/h");
-  setKPI('lake', (284.2+Math.random()*0.2).toFixed(2)+" m");
-  setKPI('evap', (760+Math.floor(Math.random()*120))+" m³/d");
-  setKPI('ndvi', (0.32+Math.random()*0.1).toFixed(2));
-}, 3500);
-
-// ===== LOG STREAM =====
-setInterval(()=>{const msgs=[
-  "Planner LLM: reassigned ADT 02 to Haul N (congestion)",
-  "Execution LLM: throttled crusher feed to stabilize amperage",
-  "Safety Wrapper: geofence ping — perimeter intact",
-  "Telemetry: Excavator 01 cycle time trending +4%",
-  "Materials: 0–5mm stockpile +42 t"
-]; log(msgs[Math.floor(Math.random()*msgs.length)]);}, 4500);
-
-// ===== SITE OPS PIN (kept as minor visual) =====
-// (Radar map will replace primary visualization but this adds subtle movement.)
-</script>
-
-<!-- Leaflet & live radar/weather (Terrastruct Skys) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-// ====== SITE OPS: Leaflet map + RainViewer radar + Terrastruct Skys branding ======
-(function initMap(){
-  const mapEl = document.getElementById('map');
-  if(!mapEl) return;
-
-  // Center roughly on Ras Al Khaimah / Northern Emirates
-  const map = L.map('map', { zoomControl: true, attributionControl:true }).setView([25.69, 55.94], 8);
-
-  // Base map
-  const base = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:'&copy; OpenStreetMap • Terrastruct Skys'
-  }).addTo(map);
-
-  // Terrastruct Skys brand control
-  const Skys = L.Control.extend({
-    onAdd: function(){
-      const div = L.DomUtil.create('div','leaflet-control-tskys');
-      div.innerHTML = '<b>Terrastruct Skys</b><br/>Live Radar Overlay';
-      return div;
-    },
-    onRemove: function(){}
-  });
-  map.addControl(new Skys({ position:'topright' }));
-
-  // Radar tiles
-  let radarLayer = null; let rvMeta = null; let frameIndex = 0; let animTimer = null;
-
-  async function loadRainViewerMeta(){
-    const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
-    rvMeta = await res.json();
-  }
-
-  function showFrame(idx){
-    if(!rvMeta) return;
-    const frames = rvMeta.radar.nowcast.length ? rvMeta.radar.nowcast : rvMeta.radar.past;
-    const frame = frames[idx];
-    const url = rvMeta.host + frame.path + '/256/{z}/{x}/{y}/2/1_1.png';
-    if(radarLayer) map.removeLayer(radarLayer);
-    radarLayer = L.tileLayer(url, { opacity: 0.65, zIndex: 400 }).addTo(map);
-  }
-
-  async function startRadar(){
-    if(!rvMeta) await loadRainViewerMeta();
-    const frames = rvMeta.radar.nowcast.length ? rvMeta.radar.nowcast : rvMeta.radar.past;
-    if(!frames || !frames.length) return;
-    frameIndex = Math.max(0, frames.length - 4);
-    showFrame(frameIndex);
-    if(animTimer) clearInterval(animTimer);
-    animTimer = setInterval(()=>{
-      frameIndex = (frameIndex + 1) % frames.length;
-      showFrame(frameIndex);
-    }, 1200);
-  }
-
-  function stopRadar(){
-    if(animTimer) clearInterval(animTimer);
-    if(radarLayer){ map.removeLayer(radarLayer); radarLayer=null; }
-  }
-
-  const toggle = document.getElementById('radarToggle');
-  let radarOn = false;
-  toggle.addEventListener('click', async ()=>{
-    radarOn = !radarOn;
-    toggle.textContent = radarOn ? 'Hide Radar' : 'Toggle Radar';
-    if(radarOn) { await startRadar(); } else { stopRadar(); }
-  });
-
-  // Auto-start radar the first time Site Ops is opened
-  document.querySelector('[data-view="siteops"]').addEventListener('click', ()=>{
-    if(!radarOn) { toggle.click(); }
-  });
-})();
-</script>
+</div>
 
 <script>
-// ====== WEATHER TAB: Live conditions from Open-Meteo (RAK coords) ======
-(async function liveWeather(){
-  const url = 'https://api.open-meteo.com/v1/forecast?latitude=25.69&longitude=55.94&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&forecast_days=1';
-  try{
-    const r = await fetch(url);
-    const j = await r.json();
-    const c = j.current;
-    const wxNow = document.getElementById('wxNow');
-    if(wxNow){
-      wxNow.textContent = `Wind ${Number(c.wind_speed_10m).toFixed(1)} kt • Temp ${Number(c.temperature_2m).toFixed(1)}°C • Humidity ${Number(c.relative_humidity_2m).toFixed(0)}% • Rain ${Number(c.precipitation||0).toFixed(1)} mm`;
+/* ====== CONFIG ====== */
+const DEMO_MODE = true; // set to false when wiring real feeds
+const SITE = { name:"Showka", lat:25.148, lon:56.111, tz:"+04:00" };
+const MACHINES = ["Excavator-EX01","WheelLoader-WL02","DumpTruck-DT03","JawCrusher-JC01","Dozer-DZ01","Grader-GR01","BatchTruck-CT01"];
+const MS_PER_DAY = 86400000;
+
+/* ====== UTIL ====== */
+const qs = s => document.querySelector(s);
+const qsa = s => Array.from(document.querySelectorAll(s));
+const fmt = n => n.toLocaleString(undefined,{maximumFractionDigits:0});
+const fmt1 = n => n.toLocaleString(undefined,{maximumFractionDigits:1});
+function seedRand(str){let h=2166136261>>>0; for(let i=0;i<str.length;i++){h^=str.charCodeAt(i); h=Math.imul(h,16777619)} return ()=>{h+=0x6D2B79F5; let t=Math.imul(h^h>>>15,1|h); t^=t+Math.imul(t^t>>>7,61|t); return ((t^t>>>14)>>>0)/4294967296}}
+const rng = seedRand("terrastruct-showka-6mo");
+
+/* ====== CLOCK ====== */
+function tickClock(){
+  const el = qs("#simClock");
+  const now = new Date();
+  el.textContent = now.toLocaleString([], {hour:'2-digit', minute:'2-digit'}) + " • " + SITE.name;
+}
+setInterval(tickClock, 5000); tickClock();
+
+/* ====== HISTORICAL OPS DATA (6 months synthetic) ====== */
+function genOpsData(){
+  const today = new Date(); const start = new Date(today - 183*MS_PER_DAY);
+  const days = [];
+  for(let d=0; d<=183; d++){
+    const dt = new Date(start.getTime()+d*MS_PER_DAY);
+    const dayKey = dt.toISOString().slice(0,10);
+    const dayRng = seedRand("ops"+dayKey);
+    const entries = [];
+    MACHINES.forEach(m=>{
+      // Random work pattern with weather influence proxy
+      const workProb = 0.55 + 0.25*Math.sin(d/12) + (dayRng()-0.5)*0.2;
+      if(dayRng() < workProb){
+        const hours = Math.max(0, (6 + dayRng()*6) * (0.7 + 0.6*Math.max(0, Math.sin(d/20))));
+        const moved = hours * (30 + dayRng()*70); // m³
+        const fuel  = hours * (7 + dayRng()*10);  // liters
+        const note  = (dayRng()>0.92) ? "Blasting window" : (dayRng()>0.85 ? "Maintenance window":"");
+        entries.push({date:dayKey, machine:m, hours, moved, fuel, note});
+      }
+    });
+    days.push({date:dayKey, entries});
+  }
+  return days;
+}
+const OPS = genOpsData();
+
+/* ====== STATS ====== */
+function calcStats(range){
+  const rows = []; OPS.forEach(d=>{
+    if(d.date >= range.from && d.date <= range.to){ rows.push(...d.entries); }
+  });
+  const hours = rows.reduce((a,b)=>a+b.hours,0);
+  const moved = rows.reduce((a,b)=>a+b.moved,0);
+  const fuel  = rows.reduce((a,b)=>a+b.fuel,0);
+  const active = new Set(rows.map(r=>r.machine)).size;
+  const lakePct = Math.min(100, Math.round(moved/250000*100)); // pretend 250k m³ target
+  return {hours,moved,fuel,active,lakePct,days:rows.length};
+}
+function renderKV(range){
+  const s = calcStats(range);
+  const el = qs("#kvStats");
+  el.innerHTML = `
+    <div class="tile"><div class="k">Active machines</div><div class="v">${s.active}/${MACHINES.length}</div></div>
+    <div class="tile"><div class="k">Ops hours (range)</div><div class="v">${fmt(s.hours)}</div></div>
+    <div class="tile"><div class="k">Material moved (m³)</div><div class="v">${fmt(s.moved)}</div></div>
+    <div class="tile"><div class="k">Fuel consumed (L)</div><div class="v">${fmt(s.fuel)}</div></div>
+  `;
+}
+
+/* ====== DATE RANGE UI ====== */
+function initDatePickers(){
+  const today = new Date(); const sixAgo = new Date(today - 183*MS_PER_DAY);
+  const f = qs("#fromDate"), t = qs("#toDate");
+  const iso = d=>d.toISOString().slice(0,10);
+  f.min = iso(sixAgo); f.max = iso(today); t.min = iso(sixAgo); t.max = iso(today);
+  // default: last 30 days
+  const last30 = new Date(today - 29*MS_PER_DAY);
+  f.value = iso(last30); t.value = iso(today);
+}
+initDatePickers();
+
+/* ====== TABLE RENDER ====== */
+function renderOpsTable(range){
+  const body = qs("#opsTable tbody"); body.innerHTML = "";
+  const rows = [];
+  OPS.forEach(d=>{
+    if(d.date >= range.from && d.date <= range.to){ rows.push(...d.entries); }
+  });
+  rows.sort((a,b)=>a.date<b.date?1:-1);
+  const maxRows = 150; // cap for demo
+  rows.slice(0,maxRows).forEach(r=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${r.date}</td><td>${r.machine}</td><td>${fmt1(r.hours)}</td><td>${fmt(r.moved)}</td><td>${fmt(r.fuel)}</td><td>${r.note||""}</td>`;
+    body.appendChild(tr);
+  });
+}
+
+/* ====== CHART (vanilla canvas) ====== */
+function renderChart(range){
+  const canvas = qs("#opsChart"); const ctx = canvas.getContext("2d");
+  const width = canvas.width = canvas.clientWidth * devicePixelRatio;
+  const height = canvas.height = 260 * devicePixelRatio;
+  ctx.clearRect(0,0,width,height);
+
+  // Aggregate by day
+  const map = new Map();
+  OPS.forEach(d=>{
+    if(d.date >= range.from && d.date <= range.to){
+      const v = d.entries.reduce((a,b)=>a+b.moved,0);
+      map.set(d.date, (map.get(d.date)||0)+v);
     }
-  }catch(e){ /* fallback to simulated */ }
+  });
+  const entries = Array.from(map.entries()).sort((a,b)=>a[0]<b[0]? -1:1);
+  if(entries.length===0) return;
+  const vals = entries.map(e=>e[1]);
+  const dates = entries.map(e=>e[0]);
+  const maxV = Math.max(...vals)*1.1;
+
+  // axes
+  const m = {l:48, r:12, t:14, b:28};
+  ctx.strokeStyle = "rgba(147, 179, 217, .35)";
+  ctx.lineWidth = 1;
+  for(let i=0;i<4;i++){
+    const y = m.t + (height - m.t - m.b) * i/3;
+    ctx.beginPath(); ctx.moveTo(m.l, y); ctx.lineTo(width-m.r, y); ctx.stroke();
+  }
+  // y labels
+  ctx.fillStyle="#cfe1ff"; ctx.font = `${12*devicePixelRatio}px system-ui, -apple-system, Segoe UI`;
+  ctx.textAlign="right";
+  for(let i=0;i<=3;i++){
+    const val = Math.round(maxV * (1 - i/3));
+    const y = m.t + (height - m.t - m.b) * i/3 + 4*devicePixelRatio;
+    ctx.fillText(val.toLocaleString(), m.l - 8*devicePixelRatio, y);
+  }
+
+  // line
+  ctx.beginPath();
+  dates.forEach((d,i)=>{
+    const x = m.l + (width - m.l - m.r) * (i/(dates.length-1));
+    const y = m.t + (height - m.t - m.b) * (1 - (vals[i]/maxV));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.lineWidth = 2*devicePixelRatio;
+  ctx.strokeStyle = "rgba(110,227,255,.9)";
+  ctx.stroke();
+
+  // x labels (sparse)
+  ctx.fillStyle="#9fb2cc"; ctx.textAlign="center";
+  const step = Math.max(1, Math.floor(dates.length/6));
+  for(let i=0;i<dates.length;i+=step){
+    const x = m.l + (width - m.l - m.r) * (i/(dates.length-1));
+    ctx.fillText(dates[i].slice(5), x, height - 8*devicePixelRatio);
+  }
+}
+
+/* ====== FILTER ACTIONS ====== */
+function currentRange(){
+  return { from: qs("#fromDate").value, to: qs("#toDate").value };
+}
+function applyRange(){
+  const r = currentRange();
+  renderKV(r); renderOpsTable(r); renderChart(r);
+}
+qs("#btnApply").addEventListener("click", applyRange);
+qs("#btnLastStorm").addEventListener("click", ()=>{
+  // pick a recent 3-day window with higher ops (synthetic heuristic)
+  let bestDay = OPS.slice(-30).reduce((best, d)=>{
+    const moved = d.entries.reduce((a,b)=>a+b.moved,0);
+    return moved > best.moved ? {date:d.date, moved} : best;
+  }, {date:OPS[OPS.length-10].date, moved:0}).date;
+  const b = new Date(bestDay); const a = new Date(b - 2*MS_PER_DAY);
+  qs("#fromDate").value = a.toISOString().slice(0,10);
+  qs("#toDate").value = b.toISOString().slice(0,10);
+  applyRange();
+});
+
+/* ====== AI AGENTS TABLE ====== */
+function renderAgents(){
+  const el = qs("#agentsTable"); el.innerHTML = "";
+  const agents = [
+    {name:"Autonomy Planner", status:"Connected", conf:0.93, act:"Assigned haul routes"},
+    {name:"Excavation Controller", status:"Connected", conf:0.90, act:"Adjusted dig depth (Zone C)"},
+    {name:"Fleet Orchestrator", status:"Connected", conf:0.95, act:"Balanced cycle times"},
+    {name:"Safety Sentinel", status:"Connected", conf:0.99, act:"No conflicts detected"},
+    {name:"Weather Watch", status:"Watch", conf:0.78, act:"Updraft flag – Hajar"}
+  ];
+  agents.forEach(a=>{
+    const dot = a.status==="Connected" ? "ok" : (a.status==="Watch"?"warn":"bad");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${a.name}</td>
+                    <td><span class="status-dot ${dot}"></span> <span style="margin-left:6px">${a.status}</span></td>
+                    <td>${a.act}</td>
+                    <td>${(a.conf*100).toFixed(0)}%</td>`;
+    el.appendChild(tr);
+  });
+}
+
+/* ====== WEATHER SNAPSHOT (DEMO FIELDS) ====== */
+function renderWeather(){
+  const el = qs("#wxPanel");
+  // synthetic POWER-like fields
+  const t = 41 + Math.round(rng()*3); // °C
+  const rh = 22 + Math.round(rng()*10);
+  const wspd10 = (10 + rng()*12).toFixed(1);
+  const dir = Math.round(60 + rng()*40); // deg
+  const cape = Math.round(900 + rng()*400);
+  el.innerHTML = `
+    <div class="kv" style="grid-template-columns:repeat(2,1fr)">
+      <div class="tile"><div class="k">Temp (2m)</div><div class="v">${t} °C</div></div>
+      <div class="tile"><div class="k">RH (2m)</div><div class="v">${rh}%</div></div>
+      <div class="tile"><div class="k">Wind 10m</div><div class="v">${wspd10} m/s</div></div>
+      <div class="tile"><div class="k">Direction</div><div class="v">${dir}°</div></div>
+      <div class="tile"><div class="k">CAPE (proxy)</div><div class="v">${cape} J/kg</div></div>
+      <div class="tile"><div class="k">Cloud Base (est)</div><div class="v">${Math.round(1800 + rng()*600)} m</div></div>
+    </div>
+    <div class="note" style="margin-top:10px">Demo snapshot. For planning, wire NASA POWER/MERRA-2. For verification, add GPM IMERG.</div>
+  `;
+}
+
+/* ====== LOGS ====== */
+function renderLogs(){
+  const el = qs("#logTable"); el.innerHTML = "";
+  const now = new Date();
+  const events = [
+    "Fleet Orchestrator balanced WL02 ↔ DT03 cycles",
+    "Planner advanced cut plan for Lake Cell B-3",
+    "Safety Sentinel cleared blasting window",
+    "Weather Watch marked convective watch (Hajar)",
+    "Crusher JC01 throughput at 215 t/h (avg)"
+  ];
+  for(let i=0;i<12;i++){
+    const t = new Date(now - i*60*60*1000);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${t.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</td><td>${events[i%events.length]}</td>`;
+    el.appendChild(tr);
+  }
+}
+
+/* ====== RADAR DEMO FAILOVER ====== */
+(function initRadar(){
+  const video = qs("#radarVid"); const img = qs("#radarImg");
+  video?.addEventListener("error", ()=>{ if(img){ img.style.display="block"; } if(video){ video.style.display="none"; }}, {once:true});
 })();
+
+/* ====== INIT ====== */
+function init(){
+  const today = new Date().toISOString().slice(0,10);
+  const from = new Date(Date.now()-29*MS_PER_DAY).toISOString().slice(0,10);
+  qs("#fromDate").value = from; qs("#toDate").value = today;
+  renderAgents(); renderWeather(); applyRange(); renderLogs();
+}
+init();
 </script>
 </body>
 </html>
+
