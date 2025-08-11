@@ -7,13 +7,14 @@
 <style>
 :root{
   --bg:#080b11;--panel:#10151f;--muted:#9aa4b2;--text:#eef3fb;--accent:#d7dde6;
-  --brand:#c5cbd6;--good:#2fbf71;--warn:#e3b341;--bad:#e35d5b;--stroke:#1f2634;
+  --good:#2fbf71;--warn:#e3b341;--bad:#e35d5b;--stroke:#1f2634;
 }
 *{box-sizing:border-box} html,body{height:100%}
 body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
   background:radial-gradient(1000px 700px at 70% -10%, #182233 0%, #080b11 60%);color:var(--text)}
 .header{display:flex;align-items:center;gap:16px;padding:14px 18px;border-bottom:1px solid var(--stroke);
   background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(0,0,0,0));position:sticky;top:0;z-index:10;backdrop-filter:blur(6px)}
+.logo{width:40px;height:40px}
 .brand{font-weight:800;letter-spacing:.14em}
 .subtle{color:var(--muted);font-size:12px}
 .legend{font-size:12px;color:var(--muted);padding-left:8px}
@@ -43,19 +44,15 @@ hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
 .list .row{display:contents} .list .head{color:var(--muted);font-size:12px}
 .list .cell{background:#0e1420;border:1px solid #1d2332;padding:10px;border-radius:10px}
 .footer{padding:10px 18px;border-top:1px solid var(--stroke);color:var(--muted);font-size:12px}
-.logo{width:40px;height:40px}
 </style>
 </head>
 <body>
   <div class="header">
-    <!-- Inline SVG logo -->
+    <!-- Inline metallic globe + T logo -->
     <svg class="logo" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-label="Terrastruct logo">
-      <defs>
-        <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#d9dde2"/><stop offset="35%" stop-color="#ffffff"/>
-          <stop offset="65%" stop-color="#c3c9d2"/><stop offset="100%" stop-color="#8e96a3"/>
-        </linearGradient>
-      </defs>
+      <defs><linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#d9dde2"/><stop offset="35%" stop-color="#ffffff"/>
+        <stop offset="65%" stop-color="#c3c9d2"/><stop offset="100%" stop-color="#8e96a3"/></linearGradient></defs>
       <circle cx="110" cy="110" r="100" fill="none" stroke="url(#chrome)" stroke-width="5"/>
       <g opacity="0.5" stroke="url(#chrome)" stroke-width="2" fill="none">
         <ellipse cx="110" cy="110" rx="78" ry="38"/>
@@ -111,4 +108,170 @@ hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
           <div class="kpi"><div class="label">Excavation Today</div><div class="value">2,450 m³ ◦</div></div>
           <div class="kpi"><div class="label">Crusher Throughput</div><div class="value">185 t/h ◦</div></div>
           <div class="kpi"><div class="label">Lake Level (Δ24h)</div><div class="value">284.3 m (+0.03) ◦</div></div>
-          <div class="kpi"><div class="label">Est
+          <div class="kpi"><div class="label">Est. Evaporation</div><div class="value">820 m³/d ◦</div></div>
+          <div class="kpi"><div class="label">Vegetation Index</div><div class="value">NDVI 0.38 ◦</div></div>
+          <div class="kpi"><div class="label">Safety Incidents</div><div class="value">0</div></div>
+        </div>
+
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 6">
+            <h3>Mini Site Map <span class="badge">RAK Pilot</span></h3>
+            <div class="info">Workfaces, haul roads, lake outline, stockpiles. ◦</div>
+            <hr class="sep"/>
+            <div class="info">Click <b>Site Ops</b> to view layers & 24h playback.</div>
+          </div>
+          <div class="tile" style="grid-column:span 3">
+            <h3>Machinery Health <span class="badge">Execution LLM — Ops Manager</span></h3>
+            <div class="info">Excavator 01 <span class="status-good">●</span> 76% util<br/>Jaw Crusher <span class="status-warn">●</span> service in 18h ◦</div>
+          </div>
+          <div class="tile" style="grid-column:span 3">
+            <h3>Microclimate Snapshot <span class="badge">Design/Surveyor</span></h3>
+            <div class="info">Wind 9 kt, Temp 39°C, Ops window: 17:00–21:00 ◦</div>
+          </div>
+          <div class="tile" style="grid-column:span 4">
+            <h3>Materials & Stockpiles</h3>
+            <div class="info">0–5mm: 1,140 t ◦ • 5–10mm: 860 t ◦ • 10–20mm: 620 t ◦</div>
+          </div>
+          <div class="tile" style="grid-column:span 4">
+            <h3>Financial Snapshot</h3>
+            <div class="info">Runway: 11 mo ◦ • Daily ops: AED 47k ◦</div>
+          </div>
+          <div class="tile" style="grid-column:span 4">
+            <h3>Safety & Geofences <span class="badge">Safety Wrapper — HSE</span></h3>
+            <div class="info">All geofences intact • E-Stops: 0 in 24h</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SITE OPS -->
+      <section id="siteops" class="view" hidden>
+        <div class="section-title"><h2>Site Operations</h2><span class="tag">Simulated ◦</span></div>
+        <div class="info">Layers: Workfaces • Haul Roads • Lake • Stockpiles • Sensors • Safety Perimeters</div>
+        <hr class="sep"/>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 8">
+            <h3>Map & 24h Playback</h3>
+            <div class="info">Playback scrubber ◦ • Pins for Excavators, Crusher, Weighbridge ◦</div>
+          </div>
+          <div class="tile" style="grid-column:span 4">
+            <h3>Pinned Assets</h3>
+            <div class="info">Excavator 01 • Excavator 02 • Jaw Crusher • Wheel Loader 01 • ADT 01 • ADT 02 • Water Bowser</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MACHINERY -->
+      <section id="machinery" class="view" hidden>
+        <div class="section-title"><h2>Machinery</h2>
+          <span class="badge">Execution LLM — Ops Manager / Superintendent</span></div>
+        <div class="list">
+          <div class="row head">
+            <div class="cell">Machine</div><div class="cell">Status</div>
+            <div class="cell">Utilization</div><div class="cell">Hrs to Service</div><div class="cell">Location</div>
+          </div>
+          <div class="row"><div class="cell">Excavator 01 – Primary</div><div class="cell">Active ●</div><div class="cell">76%</div><div class="cell">18h</div><div class="cell">Workface A</div></div>
+          <div class="row"><div class="cell">Excavator 02 – Secondary</div><div class="cell">Standby ◦</div><div class="cell">22%</div><div class="cell">46h</div><div class="cell">Yard</div></div>
+          <div class="row"><div class="cell">Mobile Jaw Crusher – Primary</div><div class="cell">Running ●</div><div class="cell">68%</div><div class="cell">18h</div><div class="cell">Crusher Pad</div></div>
+          <div class="row"><div class="cell">Mobile Jaw Crusher – Reserve</div><div class="cell">Offline ◦</div><div class="cell">—</div><div class="cell">—</div><div class="cell">Maintenance Bay</div></div>
+          <div class="row"><div class="cell">Wheel Loader 01</div><div class="cell">Active ●</div><div class="cell">61%</div><div class="cell">34h</div><div class="cell">Stockpile 1</div></div>
+          <div class="row"><div class="cell">ADT 01</div><div class="cell">Active ●</div><div class="cell">58%</div><div class="cell">52h</div><div class="cell">Haul N</div></div>
+          <div class="row"><div class="cell">ADT 02</div><div class="cell">Active ●</div><div class="cell">54%</div><div class="cell">50h</div><div class="cell">Haul N</div></div>
+          <div class="row"><div class="cell">Water Bowser</div><div class="cell">Active ●</div><div class="cell">39%</div><div class="cell">70h</div><div class="cell">Road S</div></div>
+          <div class="row"><div class="cell">Utility Vehicle</div><div class="cell">Active ●</div><div class="cell">27%</div><div class="cell">120h</div><div class="cell">Perimeter</div></div>
+        </div>
+      </section>
+
+      <!-- MICROCLIMATE -->
+      <section id="microclimate" class="view" hidden>
+        <div class="section-title"><h2>Microclimate & Water</h2><span class="badge">Design LLM — Civil/Hydro/Env</span></div>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 6">
+            <h3>Lake Level Trend ◦</h3>
+            <div class="info">Level: 284.3 m • Δ24h: +0.03 m • Evap est.: 820 m³/d</div>
+          </div>
+          <div class="tile" style="grid-column:span 6">
+            <h3>Afforestation / NDVI ◦</h3>
+            <div class="info">Planted: 12.4 ha • Survival est.: 78% • NDVI: 0.38</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MATERIALS -->
+      <section id="materials" class="view" hidden>
+        <div class="section-title"><h2>Materials (Aggregate)</h2><span class="badge">Production Eng.</span></div>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 6">
+            <h3>Production Tracker ◦</h3>
+            <div class="info">Today: 1,420 t • 7d: 8,950 t • MTD: 19,200 t</div>
+          </div>
+          <div class="tile" style="grid-column:span 6">
+            <h3>Stockpiles ◦</h3>
+            <div class="info">0–5mm: 1,140 t • 5–10mm: 860 t • 10–20mm: 620 t</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINANCIALS -->
+      <section id="financials" class="view" hidden>
+        <div class="section-title"><h2>Financials (Snapshot)</h2><span class="badge">Cost Eng. / Controller</span></div>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 4"><h3>Runway ◦</h3><div class="info">11 months</div></div>
+          <div class="tile" style="grid-column:span 4"><h3>Ops Cost Drivers ◦</h3><div class="info">Fuel • Leases • Manpower</div></div>
+          <div class="tile" style="grid-column:span 4"><h3>Scenario Toggle ◦</h3><div class="info">Base / Optimistic / Conservative</div></div>
+        </div>
+      </section>
+
+      <!-- PARTNERS -->
+      <section id="partners" class="view" hidden>
+        <div class="section-title"><h2>Partners</h2><span class="badge">Activation</span></div>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 6"><h3>Hero Experience Group</h3><div class="info">Land Activation • Milestones pending</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Vendors & Tech</h3><div class="info">Leasing • Environmental Labs</div></div>
+        </div>
+      </section>
+
+      <!-- DATASETS -->
+      <section id="datasets" class="view" hidden>
+        <div class="section-title"><h2>Datasets (Defensible IP)</h2><span class="badge">Data Governance</span></div>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 6"><h3>Terrain & Geology</h3><div class="info">DEM tiles • Bore logs</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Operations Telemetry</h3><div class="info">Equipment hours • Utilization • Breadcrumbs</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Materials QC</h3><div class="info">Sieve • Moisture • Density</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Water & Microclimate</h3><div class="info">Level readings • Weather • Sensor health</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Safety & Compliance</h3><div class="info">Incidents • Inspections • Geofences</div></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section id="settings" class="view" hidden>
+        <div class="section-title"><h2>Settings & Roles</h2><span class="badge">Admin</span></div>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 6"><h3>User Roles</h3><div class="info">Admin • Ops • Partner (view)</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Audit Log</h3><div class="info">Recent activity (demo list)</div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="footer">This is a static demo. Items marked ◦ are simulated for demo purposes.</div>
+
+<script>
+// SPA navigation + live clock
+const views=[...document.querySelectorAll('.view')];
+const buttons=[...document.querySelectorAll('.nav button')];
+buttons.forEach(btn=>btn.addEventListener('click',()=>{
+  buttons.forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const id=btn.getAttribute('data-view');
+  views.forEach(v=>v.hidden=(v.id!==id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+function tick(){
+  const now=new Date();
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(tick,1000); tick();
+</script>
+</body>
+</html>
