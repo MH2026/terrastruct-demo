@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Terrastruct Control Panel — Demo</title>
+<title>Terrastruct Control Panel — Investor Demo</title>
 <style>
 :root{
   --bg:#080b11;--panel:#10151f;--muted:#9aa4b2;--text:#eef3fb;--accent:#d7dde6;
@@ -27,28 +27,53 @@ body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,R
 .nav button.active{border-color:#334262;background:#111826}
 .main{padding:18px;overflow:auto}
 .kpis{display:grid;grid-template-columns:repeat(8,minmax(140px,1fr));gap:10px;padding:12px 18px}
-.kpi{background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:12px;transition:transform .2s,border-color .2s}
-.kpi:hover{transform:translateY(-2px);border-color:#2b3550}
+.kpi{background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:12px}
 .kpi .label{font-size:12px;color:var(--muted)} .kpi .value{font-size:18px;margin-top:6px}
 .tiles{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
-.tile{grid-column:span 4;background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:14px;min-height:120px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.tile{grid-column:span 4;background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:14px;min-height:120px}
 .tile h3{margin:0 0 8px 0;font-size:14px;color:var(--accent)}
 .badge{padding:2px 6px;border:1px solid #2a3244;border-radius:6px;font-size:11px;color:#c9d1e1;margin-left:8px}
 .tag{border:1px solid #33405a;color:#c9d1e1;padding:2px 6px;border-radius:6px;font-size:11px}
 .status-good{color:var(--good)} .status-warn{color:var(--warn)} .status-bad{color:var(--bad)}
-hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
+hr.sep{border:0;border-top:1px solid #1d2630;margin:14px 0}
 .section-title{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .section-title h2{margin:0;font-size:16px}
 .info{font-size:12px;color:var(--muted)}
-.list{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr .8fr;gap:10px}
+.list{display:grid;grid-template-columns:1.1fr .7fr .6fr .7fr .8fr .9fr;gap:10px}
 .list .row{display:contents} .list .head{color:var(--muted);font-size:12px}
-.list .cell{background:#0e1420;border:1px solid #1d2332;padding:10px;border-radius:10px}
+.list .cell{background:#0e1420;border:1px solid #1d2332;padding:10px;border-radius:10px;display:flex;align-items:center;gap:8px}
 .footer{padding:10px 18px;border-top:1px solid var(--stroke);color:var(--muted);font-size:12px}
+button{cursor:pointer;border:1px solid #2a3244;background:#111826;color:#e8edf5;border-radius:8px;padding:6px 10px}
+button:disabled{opacity:.6;cursor:not-allowed}
+button.danger{border-color:#5a2730;background:#2a0f15;color:#ffb3b3}
+.toast{position:fixed;right:16px;bottom:16px;background:#111826;border:1px solid #2a3244;color:#e8edf5;
+  padding:10px 12px;border-radius:10px;opacity:0;transform:translateY(8px);transition:.2s}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{border-color:#6b2a2a;color:#ffc7c7}
+.log-box{max-height:180px;overflow:auto;background:#0e1420;border:1px solid #1d2332;border-radius:8px;padding:8px}
+.log-row{padding:6px 8px;border-bottom:1px dashed #1d2332}
+dialog{background:#0f1420;color:#e8edf5;border:1px solid #2a3244;border-radius:12px;padding:16px}
+canvas{width:100%;height:220px;display:block;background:#0e1420;border:1px solid #1d2332;border-radius:8px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.agent{background:#0e1420;border:1px solid #1d2332;border-radius:12px;padding:12px}
+.agent .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.agent .bar{height:6px;background:#141b28;border:1px solid #1d2332;border-radius:8px;margin-top:8px;overflow:hidden}
+.agent .bar>span{display:block;height:100%;background:#2b6df6;width:0%}
+.badge-live{border:1px solid #2b6df6;color:#bcd3ff;padding:2px 6px;border-radius:6px;font-size:11px}
+.hist-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* Leaflet map container + Terrastruct Skys brand */
+#map{width:100%;height:360px;background:#0e1420;border:1px solid #1d2332;border-radius:10px}
+.leaflet-control-tskys{
+  background:rgba(16,21,31,.8); color:#e8edf5; border:1px solid #2a3244; border-radius:8px;
+  padding:6px 10px; font-size:12px; box-shadow:0 4px 12px rgba(0,0,0,.35);
+}
+.leaflet-control-tskys b{letter-spacing:.06em}
 </style>
 </head>
 <body>
   <div class="header">
-    <!-- Inline metallic globe + T logo -->
+    <!-- Inline logo -->
     <svg class="logo" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-label="Terrastruct logo">
       <defs><linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#d9dde2"/><stop offset="35%" stop-color="#ffffff"/>
@@ -67,7 +92,10 @@ hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
       <div class="brand">TERRASTRUCT</div>
       <div class="subtle">Control Panel • RAK Pilot • <span id="clock"></span> (UAE)</div>
     </div>
-    <div style="margin-left:auto" class="legend">Legend: <span class="tag">Simulated</span> items use ◦</div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <button id="estopBtn" class="danger">Emergency Stop</button>
+      <div class="legend">Legend: <span class="tag">Simulated</span> items use ◦</div>
+    </div>
   </div>
 
   <div class="container">
@@ -77,12 +105,12 @@ hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
           <div class="nav-title">NAVIGATION</div>
           <button data-view="dashboard" class="active">Dashboard</button>
           <button data-view="siteops">Site Ops</button>
+          <button data-view="agents">AI Agents</button>
           <button data-view="machinery">Machinery</button>
-          <button data-view="microclimate">Microclimate & Water</button>
+          <button data-view="weather">Microclimate & Weather</button>
           <button data-view="materials">Materials</button>
-          <button data-view="financials">Financials</button>
-          <button data-view="partners">Partners</button>
           <button data-view="datasets">Datasets (Defensible IP)</button>
+          <button data-view="history">History Search</button>
           <button data-view="settings">Settings</button>
         </div>
         <div class="nav-section">
@@ -103,130 +131,165 @@ hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
       <!-- DASHBOARD -->
       <section id="dashboard" class="view">
         <div class="kpis">
-          <div class="kpi"><div class="label">Site Readiness</div><div class="value">82%</div></div>
-          <div class="kpi"><div class="label">Active Workfaces</div><div class="value">3</div></div>
-          <div class="kpi"><div class="label">Excavation Today</div><div class="value">2,450 m³ ◦</div></div>
-          <div class="kpi"><div class="label">Crusher Throughput</div><div class="value">185 t/h ◦</div></div>
-          <div class="kpi"><div class="label">Lake Level (Δ24h)</div><div class="value">284.3 m (+0.03) ◦</div></div>
-          <div class="kpi"><div class="label">Est. Evaporation</div><div class="value">820 m³/d ◦</div></div>
-          <div class="kpi"><div class="label">Vegetation Index</div><div class="value">NDVI 0.38 ◦</div></div>
-          <div class="kpi"><div class="label">Safety Incidents</div><div class="value">0</div></div>
+          <div class="kpi"><div class="label">Site Readiness</div><div class="value" data-kpi="readiness">82%</div></div>
+          <div class="kpi"><div class="label">Active Workfaces</div><div class="value" data-kpi="workfaces">3</div></div>
+          <div class="kpi"><div class="label">Excavation Today</div><div class="value" data-kpi="excavation">2,450 m³ ◦</div></div>
+          <div class="kpi"><div class="label">Crusher Throughput</div><div class="value" data-kpi="crusher">185 t/h ◦</div></div>
+          <div class="kpi"><div class="label">Lake Level (Δ24h)</div><div class="value" data-kpi="lake">284.3 m ◦</div></div>
+          <div class="kpi"><div class="label">Est. Evaporation</div><div class="value" data-kpi="evap">820 m³/d ◦</div></div>
+          <div class="kpi"><div class="label">Vegetation Index</div><div class="value" data-kpi="ndvi">0.38 ◦</div></div>
+          <div class="kpi"><div class="label">Safety Incidents</div><div class="value" data-kpi="incidents">0</div></div>
         </div>
-
         <div class="tiles">
-          <div class="tile" style="grid-column:span 6">
-            <h3>Mini Site Map <span class="badge">RAK Pilot</span></h3>
-            <div class="info">Workfaces, haul roads, lake outline, stockpiles. ◦</div>
-            <hr class="sep"/>
-            <div class="info">Click <b>Site Ops</b> to view layers & 24h playback.</div>
-          </div>
-          <div class="tile" style="grid-column:span 3">
-            <h3>Machinery Health <span class="badge">Execution LLM — Ops Manager</span></h3>
-            <div class="info">Excavator 01 <span class="status-good">●</span> 76% util<br/>Jaw Crusher <span class="status-warn">●</span> service in 18h ◦</div>
-          </div>
-          <div class="tile" style="grid-column:span 3">
-            <h3>Microclimate Snapshot <span class="badge">Design/Surveyor</span></h3>
-            <div class="info">Wind 9 kt, Temp 39°C, Ops window: 17:00–21:00 ◦</div>
+          <div class="tile" style="grid-column:span 8">
+            <h3>Lake Creation — Machine Hours (6 months) ◦</h3>
+            <canvas id="machHoursChart"></canvas>
           </div>
           <div class="tile" style="grid-column:span 4">
-            <h3>Materials & Stockpiles</h3>
-            <div class="info">0–5mm: 1,140 t ◦ • 5–10mm: 860 t ◦ • 10–20mm: 620 t ◦</div>
-          </div>
-          <div class="tile" style="grid-column:span 4">
-            <h3>Financial Snapshot</h3>
-            <div class="info">Runway: 11 mo ◦ • Daily ops: AED 47k ◦</div>
-          </div>
-          <div class="tile" style="grid-column:span 4">
-            <h3>Safety & Geofences <span class="badge">Safety Wrapper — HSE</span></h3>
-            <div class="info">All geofences intact • E-Stops: 0 in 24h</div>
+            <h3>System Log</h3>
+            <div id="systemLog" class="log-box"></div>
           </div>
         </div>
       </section>
 
       <!-- SITE OPS -->
       <section id="siteops" class="view" hidden>
-        <div class="section-title"><h2>Site Operations</h2><span class="tag">Simulated ◦</span></div>
-        <div class="info">Layers: Workfaces • Haul Roads • Lake • Stockpiles • Sensors • Safety Perimeters</div>
-        <hr class="sep"/>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 8">
-            <h3>Map & 24h Playback</h3>
-            <div class="info">Playback scrubber ◦ • Pins for Excavators, Crusher, Weighbridge ◦</div>
+        <div class="section-title"><h2>Site Operations</h2><span class="badge">Terrastruct Skys — Live Radar</span></div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+          <button id="radarToggle">Toggle Radar</button>
+          <small class="info">Powered by Terrastruct Skys ◦</small>
+        </div>
+        <div id="map"></div>
+      </section>
+
+      <!-- AI AGENTS -->
+      <section id="agents" class="view" hidden>
+        <div class="section-title"><h2>AI Agents</h2><span class="badge-live">Live-simulated</span></div>
+        <div class="agent-grid">
+          <div class="agent" data-agent="Surveyor">
+            <h3>Surveyor LLM</h3>
+            <div class="meta"><span class="tag">Geomatics</span><span id="a-Surveyor-status">Idle</span> • Last run: <span id="a-Surveyor-last">–</span></div>
+            <div class="bar"><span id="a-Surveyor-bar"></span></div>
+            <button data-run="Surveyor">Process Drone Survey</button>
+            <div class="info" id="a-Surveyor-out">Awaiting task…</div>
           </div>
-          <div class="tile" style="grid-column:span 4">
-            <h3>Pinned Assets</h3>
-            <div class="info">Excavator 01 • Excavator 02 • Jaw Crusher • Wheel Loader 01 • ADT 01 • ADT 02 • Water Bowser</div>
+          <div class="agent" data-agent="Design">
+            <h3>Design LLM</h3>
+            <div class="meta"><span class="tag">Civil • Hydro</span><span id="a-Design-status">Idle</span> • Last run: <span id="a-Design-last">–</span></div>
+            <div class="bar"><span id="a-Design-bar"></span></div>
+            <button data-run="Design">Generate Grading Plan</button>
+            <div class="info" id="a-Design-out">Awaiting task…</div>
+          </div>
+          <div class="agent" data-agent="Planner">
+            <h3>Planner LLM</h3>
+            <div class="meta"><span class="tag">Scheduling</span><span id="a-Planner-status">Idle</span> • Last run: <span id="a-Planner-last">–</span></div>
+            <div class="bar"><span id="a-Planner-bar"></span></div>
+            <button data-run="Planner">Sequence Work Orders</button>
+            <div class="info" id="a-Planner-out">Awaiting task…</div>
+          </div>
+          <div class="agent" data-agent="Execution">
+            <h3>Execution LLM</h3>
+            <div class="meta"><span class="tag">Ops</span><span id="a-Execution-status">Idle</span> • Last run: <span id="a-Execution-last">–</span></div>
+            <div class="bar"><span id="a-Execution-bar"></span></div>
+            <button data-run="Execution">Dispatch Machines</button>
+            <div class="info" id="a-Execution-out">Awaiting task…</div>
+          </div>
+          <div class="agent" data-agent="Safety">
+            <h3>Safety Wrapper</h3>
+            <div class="meta"><span class="tag">HSE</span><span id="a-Safety-status">Idle</span> • Last run: <span id="a-Safety-last">–</span></div>
+            <div class="bar"><span id="a-Safety-bar"></span></div>
+            <button data-run="Safety">Run Safety Sweep</button>
+            <div class="info" id="a-Safety-out">Awaiting task…</div>
+          </div>
+          <div class="agent" data-agent="Adapter">
+            <h3>Adapter Gateway</h3>
+            <div class="meta"><span class="tag">CAN/ROS</span><span id="a-Adapter-status">Idle</span> • Last run: <span id="a-Adapter-last">–</span></div>
+            <div class="bar"><span id="a-Adapter-bar"></span></div>
+            <button data-run="Adapter">Sync OEM Interfaces</button>
+            <div class="info" id="a-Adapter-out">Awaiting task…</div>
           </div>
         </div>
       </section>
 
       <!-- MACHINERY -->
       <section id="machinery" class="view" hidden>
-        <div class="section-title"><h2>Machinery</h2>
-          <span class="badge">Execution LLM — Ops Manager / Superintendent</span></div>
+        <div class="section-title">
+          <h2>Machinery</h2><span class="badge">Execution LLM — Ops</span>
+        </div>
+        <div class="grid-2">
+          <div class="tile">
+            <h3>Daily Operating Hours (Last 30 days) ◦</h3>
+            <canvas id="machDailyChart"></canvas>
+          </div>
+          <div class="tile">
+            <h3>Cumulative Hours by Machine Type (6 months) ◦</h3>
+            <canvas id="machTypeChart"></canvas>
+          </div>
+        </div>
+        <hr class="sep"/>
         <div class="list">
           <div class="row head">
             <div class="cell">Machine</div><div class="cell">Status</div>
-            <div class="cell">Utilization</div><div class="cell">Hrs to Service</div><div class="cell">Location</div>
+            <div class="cell">Utilization</div><div class="cell">Hrs to Service</div><div class="cell">Location</div><div class="cell">Actions</div>
           </div>
-          <div class="row"><div class="cell">Excavator 01 – Primary</div><div class="cell">Active ●</div><div class="cell">76%</div><div class="cell">18h</div><div class="cell">Workface A</div></div>
-          <div class="row"><div class="cell">Excavator 02 – Secondary</div><div class="cell">Standby ◦</div><div class="cell">22%</div><div class="cell">46h</div><div class="cell">Yard</div></div>
-          <div class="row"><div class="cell">Mobile Jaw Crusher – Primary</div><div class="cell">Running ●</div><div class="cell">68%</div><div class="cell">18h</div><div class="cell">Crusher Pad</div></div>
-          <div class="row"><div class="cell">Mobile Jaw Crusher – Reserve</div><div class="cell">Offline ◦</div><div class="cell">—</div><div class="cell">—</div><div class="cell">Maintenance Bay</div></div>
-          <div class="row"><div class="cell">Wheel Loader 01</div><div class="cell">Active ●</div><div class="cell">61%</div><div class="cell">34h</div><div class="cell">Stockpile 1</div></div>
-          <div class="row"><div class="cell">ADT 01</div><div class="cell">Active ●</div><div class="cell">58%</div><div class="cell">52h</div><div class="cell">Haul N</div></div>
-          <div class="row"><div class="cell">ADT 02</div><div class="cell">Active ●</div><div class="cell">54%</div><div class="cell">50h</div><div class="cell">Haul N</div></div>
-          <div class="row"><div class="cell">Water Bowser</div><div class="cell">Active ●</div><div class="cell">39%</div><div class="cell">70h</div><div class="cell">Road S</div></div>
-          <div class="row"><div class="cell">Utility Vehicle</div><div class="cell">Active ●</div><div class="cell">27%</div><div class="cell">120h</div><div class="cell">Perimeter</div></div>
+          <div class="row">
+            <div class="cell">Excavator 01 – Primary</div><div class="cell">Active ●</div><div class="cell">76%</div><div class="cell">18h</div><div class="cell">Workface A</div>
+            <div class="cell"><button data-cmd="pause" data-target="Excavator 01">Pause</button><button data-cmd="resume" data-target="Excavator 01">Resume</button></div>
+          </div>
+          <div class="row">
+            <div class="cell">Excavator 02 – Secondary</div><div class="cell">Standby ◦</div><div class="cell">22%</div><div class="cell">46h</div><div class="cell">Yard</div>
+            <div class="cell"><button data-cmd="resume" data-target="Excavator 02">Resume</button></div>
+          </div>
+          <div class="row">
+            <div class="cell">Mobile Jaw Crusher – Primary</div><div class="cell">Running ●</div><div class="cell">68%</div><div class="cell">18h</div><div class="cell">Crusher Pad</div>
+            <div class="cell"><button data-cmd="pause" data-target="Jaw Crusher">Pause</button><button data-cmd="reassign" data-target="Jaw Crusher">Reassign</button></div>
+          </div>
+          <div class="row">
+            <div class="cell">Wheel Loader 01</div><div class="cell">Active ●</div><div class="cell">61%</div><div class="cell">34h</div><div class="cell">Stockpile 1</div>
+            <div class="cell"><button data-cmd="pause" data-target="Wheel Loader 01">Pause</button><button data-cmd="resume" data-target="Wheel Loader 01">Resume</button></div>
+          </div>
+          <div class="row">
+            <div class="cell">ADT 01</div><div class="cell">Active ●</div><div class="cell">58%</div><div class="cell">52h</div><div class="cell">Haul N</div>
+            <div class="cell"><button data-cmd="pause" data-target="ADT 01">Pause</button><button data-cmd="reassign" data-target="ADT 01">Reassign</button></div>
+          </div>
+          <div class="row">
+            <div class="cell">ADT 02</div><div class="cell">Active ●</div><div class="cell">54%</div><div class="cell">50h</div><div class="cell">Haul N</div>
+            <div class="cell"><button data-cmd="pause" data-target="ADT 02">Pause</button><button data-cmd="reassign" data-target="ADT 02">Reassign</button></div>
+          </div>
         </div>
       </section>
 
-      <!-- MICROCLIMATE -->
-      <section id="microclimate" class="view" hidden>
-        <div class="section-title"><h2>Microclimate & Water</h2><span class="badge">Design LLM — Civil/Hydro/Env</span></div>
+      <!-- WEATHER -->
+      <section id="weather" class="view" hidden>
+        <div class="section-title"><h2>Microclimate & Weather</h2><span class="badge">Design LLM — Civil/Hydro/Env</span></div>
+        <div class="grid-2">
+          <div class="tile">
+            <h3>Rainfall (6 months) ◦</h3>
+            <canvas id="rainChart"></canvas>
+          </div>
+          <div class="tile">
+            <h3>Temperature (6 months) ◦</h3>
+            <canvas id="tempChart"></canvas>
+          </div>
+        </div>
         <div class="tiles">
           <div class="tile" style="grid-column:span 6">
-            <h3>Lake Level Trend ◦</h3>
-            <div class="info">Level: 284.3 m • Δ24h: +0.03 m • Evap est.: 820 m³/d</div>
+            <h3>Current Conditions</h3>
+            <div class="info" id="wxNow">Wind — • Temp — • Humidity — • Rain —</div>
           </div>
           <div class="tile" style="grid-column:span 6">
-            <h3>Afforestation / NDVI ◦</h3>
-            <div class="info">Planted: 12.4 ha • Survival est.: 78% • NDVI: 0.38</div>
+            <h3>Site Effects ◦</h3>
+            <div class="info">Evaporation est.: <span id="wxEvap">—</span> m³/d • Ops window: <span id="wxWindow">—</span></div>
           </div>
         </div>
       </section>
 
       <!-- MATERIALS -->
       <section id="materials" class="view" hidden>
-        <div class="section-title"><h2>Materials (Aggregate)</h2><span class="badge">Production Eng.</span></div>
+        <div class="section-title"><h2>Materials (Aggregate)</h2><span class="badge">Production</span></div>
         <div class="tiles">
-          <div class="tile" style="grid-column:span 6">
-            <h3>Production Tracker ◦</h3>
-            <div class="info">Today: 1,420 t • 7d: 8,950 t • MTD: 19,200 t</div>
-          </div>
-          <div class="tile" style="grid-column:span 6">
-            <h3>Stockpiles ◦</h3>
-            <div class="info">0–5mm: 1,140 t • 5–10mm: 860 t • 10–20mm: 620 t</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- FINANCIALS -->
-      <section id="financials" class="view" hidden>
-        <div class="section-title"><h2>Financials (Snapshot)</h2><span class="badge">Cost Eng. / Controller</span></div>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 4"><h3>Runway ◦</h3><div class="info">11 months</div></div>
-          <div class="tile" style="grid-column:span 4"><h3>Ops Cost Drivers ◦</h3><div class="info">Fuel • Leases • Manpower</div></div>
-          <div class="tile" style="grid-column:span 4"><h3>Scenario Toggle ◦</h3><div class="info">Base / Optimistic / Conservative</div></div>
-        </div>
-      </section>
-
-      <!-- PARTNERS -->
-      <section id="partners" class="view" hidden>
-        <div class="section-title"><h2>Partners</h2><span class="badge">Activation</span></div>
-        <div class="tiles">
-          <div class="tile" style="grid-column:span 6"><h3>Hero Experience Group</h3><div class="info">Land Activation • Milestones pending</div></div>
-          <div class="tile" style="grid-column:span 6"><h3>Vendors & Tech</h3><div class="info">Leasing • Environmental Labs</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Production Tracker ◦</h3><div class="info" id="prodNow">Today — t • 7d — t • MTD — t</div></div>
+          <div class="tile" style="grid-column:span 6"><h3>Stockpiles ◦</h3><div class="info" id="stockNow">0–5mm — t • 5–10mm — t • 10–20mm — t</div></div>
         </div>
       </section>
 
@@ -242,6 +305,23 @@ hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
         </div>
       </section>
 
+      <!-- HISTORY -->
+      <section id="history" class="view" hidden>
+        <div class="section-title"><h2>History Search (Last 6 Months)</h2><span class="badge">Replay</span></div>
+        <div class="hist-ctrl">
+          <label for="histDate">Choose date:</label>
+          <input id="histDate" type="date"/>
+          <button id="histBtn">Load Day</button>
+        </div>
+        <hr class="sep"/>
+        <div class="tiles">
+          <div class="tile" style="grid-column:span 4"><h3>Operations</h3><div class="info" id="histOps">—</div></div>
+          <div class="tile" style="grid-column:span 4"><h3>Machines Active</h3><div class="info" id="histMachines">—</div></div>
+          <div class="tile" style="grid-column:span 4"><h3>Weather</h3><div class="info" id="histWx">—</div></div>
+          <div class="tile" style="grid-column:span 12"><h3>Daily Overview ◦</h3><canvas id="histDayChart"></canvas></div>
+        </div>
+      </section>
+
       <!-- SETTINGS -->
       <section id="settings" class="view" hidden>
         <div class="section-title"><h2>Settings & Roles</h2><span class="badge">Admin</span></div>
@@ -253,25 +333,213 @@ hr.sep{border:0;border-top:1px solid #1f2630;margin:14px 0}
     </main>
   </div>
 
-  <div class="footer">This is a static demo. Items marked ◦ are simulated for demo purposes.</div>
+  <div class="footer">Demo only. Items marked ◦ are simulated.</div>
 
+<!-- Core app script -->
 <script>
-// SPA navigation + live clock
+// ===== BASICS =====
 const views=[...document.querySelectorAll('.view')];
 const buttons=[...document.querySelectorAll('.nav button')];
-buttons.forEach(btn=>btn.addEventListener('click',()=>{
-  buttons.forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const id=btn.getAttribute('data-view');
-  views.forEach(v=>v.hidden=(v.id!==id));
-  window.scrollTo({top:0,behavior:'smooth'});
-}));
-function tick(){
-  const now=new Date();
-  document.getElementById('clock').textContent =
-    now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}
+buttons.forEach(btn=>btn.addEventListener('click',()=>{buttons.forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); const id=btn.getAttribute('data-view'); views.forEach(v=>v.hidden=(v.id!==id));
+  window.scrollTo({top:0,behavior:'smooth'});}));
+function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 setInterval(tick,1000); tick();
+function toast(t,cls="ok"){const d=document.createElement('div');d.className="toast "+cls;d.textContent=t;document.body.appendChild(d);
+  requestAnimationFrame(()=>d.classList.add('show'));setTimeout(()=>{d.classList.remove('show');setTimeout(()=>d.remove(),250)},1800);}
+const logBox=document.getElementById('systemLog'); const log=(m)=>{const r=document.createElement('div');r.className='log-row';
+  r.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})+" — "+m;logBox.prepend(r);};
+
+// ===== EMERGENCY STOP =====
+const estop=document.getElementById('estopBtn'); estop.addEventListener('click',()=>{
+  const ok=confirm("Confirm Emergency Stop? This will halt all active machinery."); if(!ok) return;
+  document.body.classList.add('alerting'); toast("Emergency stop issued","err"); log("Safety: EMERGENCY STOP issued"); setTimeout(()=>document.body.classList.remove('alerting'),2000);
+});
+
+// ===== SIM DATA (6 months) =====
+const DAYS=180, now=new Date();
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);d.setHours(12,0,0,0);return d;}
+const series = {
+  excavators: Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:4+Math.random()*4, tons:200+Math.random()*180})),
+  dozers:     Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:2+Math.random()*3, tons:90+Math.random()*120})),
+  loaders:    Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:3+Math.random()*4, tons:140+Math.random()*160})),
+  adt:        Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:3+Math.random()*4, tons:180+Math.random()*200})),
+  crusher:    Array.from({length:DAYS},(_,i)=>({d:daysAgo(DAYS-1-i), h:6+Math.random()*2, tph:150+Math.random()*50}))
+};
+const weather = Array.from({length:DAYS},(_,i)=>{
+  const d=daysAgo(DAYS-1-i), t=36+Math.sin(i/18)*3+Math.random()*1.5, r=Math.max(0, (Math.sin(i/9)+1)*3 + (Math.random()<0.2?Math.random()*10:0));
+  return {d, temp: t, wind: 6+Math.random()*6, humidity: 28+Math.random()*25, rain: r};
+});
+function betweenDate(arr, date){return arr.find(x=>x.d.toDateString()===date.toDateString());}
+
+// ===== SIMPLE CANVAS CHARTS =====
+function lineChart(canvas, data, colorFn){
+  const ctx=canvas.getContext('2d'); const w=canvas.width=canvas.clientWidth*2; const h=canvas.height=canvas.clientHeight*2;
+  const pad=40, n=data.length; const xs=(i)=>pad+(w-2*pad)*(i/(n-1));
+  const vals=data.map(d=>d.v); const min=Math.min(...vals), max=Math.max(...vals); const ys=(v)=>h-pad-(h-2*pad)*( (v-min)/(max-min||1) );
+  ctx.clearRect(0,0,w,h); ctx.strokeStyle="#1d2332"; ctx.lineWidth=1; for(let i=0;i<5;i++){const y=pad+i*(h-2*pad)/4; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke();}
+  data.forEach((d,i)=>{ctx.fillStyle=colorFn(i); ctx.beginPath(); ctx.arc(xs(i), ys(d.v), 3, 0, Math.PI*2); ctx.fill(); if(i){ctx.strokeStyle=colorFn(i); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(xs(i-1), ys(data[i-1].v)); ctx.lineTo(xs(i), ys(d.v)); ctx.stroke();}});
+}
+function barChart(canvas, seriesMap){
+  const ctx=canvas.getContext('2d'); const w=canvas.width=canvas.clientWidth*2; const h=canvas.height=canvas.clientHeight*2;
+  const pad=40; const keys=Object.keys(seriesMap); const vals=keys.map(k=>seriesMap[k]); const max=Math.max(...vals);
+  const bw=(w-2*pad)/keys.length*0.7; const gap=(w-2*pad)/keys.length*0.3;
+  ctx.clearRect(0,0,w,h); ctx.strokeStyle="#1d2332"; for(let i=0;i<5;i++){const y=pad+i*(h-2*pad)/4; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-pad,y); ctx.stroke();}
+  keys.forEach((k,i)=>{const x=pad+i*(bw+gap); const v=seriesMap[k]; const bh=(h-2*pad)*(v/(max||1)); ctx.fillStyle="#2b6df6"; ctx.fillRect(x, h-pad-bh, bw, bh);
+    ctx.fillStyle="#c9d1e1"; ctx.font="24px sans-serif"; ctx.fillText(k, x, h-pad+28);});
+}
+
+// ===== DASHBOARD CHART =====
+const machHoursChart=document.getElementById('machHoursChart');
+const stacked = Array.from({length:DAYS},(_,i)=>{
+  const d=daysAgo(DAYS-1-i);
+  const v = series.excavators[i].h + series.dozers[i].h + series.loaders[i].h + series.adt[i].h + series.crusher[i].h;
+  return {d, v};
+});
+lineChart(machHoursChart, stacked, i=>"#6fb0ff");
+
+// ===== MACHINERY CHARTS =====
+const last30 = (arr)=>arr.slice(-30);
+const machDailyChart=document.getElementById('machDailyChart');
+lineChart(machDailyChart, last30(stacked), i=>"#6fe3c2");
+const cum = {
+  Excavators: Math.round(series.excavators.reduce((a,b)=>a+b.h,0)),
+  Dozers: Math.round(series.dozers.reduce((a,b)=>a+b.h,0)),
+  Loaders: Math.round(series.loaders.reduce((a,b)=>a+b.h,0)),
+  ADT: Math.round(series.adt.reduce((a,b)=>a+b.h,0)),
+  Crusher: Math.round(series.crusher.reduce((a,b)=>a+b.h,0)),
+};
+const machTypeChart=document.getElementById('machTypeChart'); barChart(machTypeChart, cum);
+
+// ===== WEATHER (SIM + LIVE NOW) =====
+const rainChart=document.getElementById('rainChart');
+lineChart(rainChart, weather.map(w=>({d:w.d,v:w.rain})), i=>"#8fb6ff");
+const tempChart=document.getElementById('tempChart');
+lineChart(tempChart, weather.map(w=>({d:w.d,v:w.temp})), i=>"#ffb36f");
+function setWxNow(){
+  const w=weather[weather.length-1];
+  document.getElementById('wxNow').textContent=`Wind ${w.wind.toFixed(1)} kt • Temp ${w.temp.toFixed(1)}°C • Humidity ${Math.round(w.humidity)}% • Rain ${w.rain.toFixed(1)} mm`;
+  document.getElementById('wxEvap').textContent=(700+Math.random()*200).toFixed(0);
+  document.getElementById('wxWindow').textContent="17:00–21:00";
+}
+setWxNow();
+
+// ===== KPI TICK =====
+function setKPI(sel,val){const el=document.querySelector(`[data-kpi="${sel}"]`); if(el) el.textContent=val;}
+setInterval(()=>{
+  setKPI('readiness', (78+Math.floor(Math.random()*6))+"%");
+  setKPI('excavation', (2100+Math.floor(Math.random()*800)).toLocaleString()+" m³");
+  setKPI('crusher', (160+Math.floor(Math.random()*40))+" t/h");
+  setKPI('lake', (284.2+Math.random()*0.2).toFixed(2)+" m");
+  setKPI('evap', (760+Math.floor(Math.random()*120))+" m³/d");
+  setKPI('ndvi', (0.32+Math.random()*0.1).toFixed(2));
+}, 3500);
+
+// ===== LOG STREAM =====
+setInterval(()=>{const msgs=[
+  "Planner LLM: reassigned ADT 02 to Haul N (congestion)",
+  "Execution LLM: throttled crusher feed to stabilize amperage",
+  "Safety Wrapper: geofence ping — perimeter intact",
+  "Telemetry: Excavator 01 cycle time trending +4%",
+  "Materials: 0–5mm stockpile +42 t"
+]; log(msgs[Math.floor(Math.random()*msgs.length)]);}, 4500);
+
+// ===== SITE OPS PIN (kept as minor visual) =====
+// (Radar map will replace primary visualization but this adds subtle movement.)
+</script>
+
+<!-- Leaflet & live radar/weather (Terrastruct Skys) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ====== SITE OPS: Leaflet map + RainViewer radar + Terrastruct Skys branding ======
+(function initMap(){
+  const mapEl = document.getElementById('map');
+  if(!mapEl) return;
+
+  // Center roughly on Ras Al Khaimah / Northern Emirates
+  const map = L.map('map', { zoomControl: true, attributionControl:true }).setView([25.69, 55.94], 8);
+
+  // Base map
+  const base = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'&copy; OpenStreetMap • Terrastruct Skys'
+  }).addTo(map);
+
+  // Terrastruct Skys brand control
+  const Skys = L.Control.extend({
+    onAdd: function(){
+      const div = L.DomUtil.create('div','leaflet-control-tskys');
+      div.innerHTML = '<b>Terrastruct Skys</b><br/>Live Radar Overlay';
+      return div;
+    },
+    onRemove: function(){}
+  });
+  map.addControl(new Skys({ position:'topright' }));
+
+  // Radar tiles
+  let radarLayer = null; let rvMeta = null; let frameIndex = 0; let animTimer = null;
+
+  async function loadRainViewerMeta(){
+    const res = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+    rvMeta = await res.json();
+  }
+
+  function showFrame(idx){
+    if(!rvMeta) return;
+    const frames = rvMeta.radar.nowcast.length ? rvMeta.radar.nowcast : rvMeta.radar.past;
+    const frame = frames[idx];
+    const url = rvMeta.host + frame.path + '/256/{z}/{x}/{y}/2/1_1.png';
+    if(radarLayer) map.removeLayer(radarLayer);
+    radarLayer = L.tileLayer(url, { opacity: 0.65, zIndex: 400 }).addTo(map);
+  }
+
+  async function startRadar(){
+    if(!rvMeta) await loadRainViewerMeta();
+    const frames = rvMeta.radar.nowcast.length ? rvMeta.radar.nowcast : rvMeta.radar.past;
+    if(!frames || !frames.length) return;
+    frameIndex = Math.max(0, frames.length - 4);
+    showFrame(frameIndex);
+    if(animTimer) clearInterval(animTimer);
+    animTimer = setInterval(()=>{
+      frameIndex = (frameIndex + 1) % frames.length;
+      showFrame(frameIndex);
+    }, 1200);
+  }
+
+  function stopRadar(){
+    if(animTimer) clearInterval(animTimer);
+    if(radarLayer){ map.removeLayer(radarLayer); radarLayer=null; }
+  }
+
+  const toggle = document.getElementById('radarToggle');
+  let radarOn = false;
+  toggle.addEventListener('click', async ()=>{
+    radarOn = !radarOn;
+    toggle.textContent = radarOn ? 'Hide Radar' : 'Toggle Radar';
+    if(radarOn) { await startRadar(); } else { stopRadar(); }
+  });
+
+  // Auto-start radar the first time Site Ops is opened
+  document.querySelector('[data-view="siteops"]').addEventListener('click', ()=>{
+    if(!radarOn) { toggle.click(); }
+  });
+})();
+</script>
+
+<script>
+// ====== WEATHER TAB: Live conditions from Open-Meteo (RAK coords) ======
+(async function liveWeather(){
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=25.69&longitude=55.94&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&forecast_days=1';
+  try{
+    const r = await fetch(url);
+    const j = await r.json();
+    const c = j.current;
+    const wxNow = document.getElementById('wxNow');
+    if(wxNow){
+      wxNow.textContent = `Wind ${Number(c.wind_speed_10m).toFixed(1)} kt • Temp ${Number(c.temperature_2m).toFixed(1)}°C • Humidity ${Number(c.relative_humidity_2m).toFixed(0)}% • Rain ${Number(c.precipitation||0).toFixed(1)} mm`;
+    }
+  }catch(e){ /* fallback to simulated */ }
+})();
 </script>
 </body>
 </html>
